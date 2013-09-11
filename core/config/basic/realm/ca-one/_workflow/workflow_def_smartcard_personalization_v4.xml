@@ -304,6 +304,11 @@
         </action>
     </state>
 
+    <state name="CERT_ISSUED" autorun="yes">
+        <action name="I18N_OPENXPKI_WF_ACTION_PERSIST_METADATA"
+                  resulting_state="METADATA_PERSISTED" />
+    </state> 
+    
     <state name="CERTS_QUEUED_FOR_PUBLICATION"
             autorun="yes">
         <description>I18N_OPENXPKI_WF_STATE_SMARTCARD_PERSONALIZATION_V4_CERTS_QUEUED_FOR_PUBLICATION</description>
@@ -420,7 +425,7 @@
         </action>
     </state>
 
-    <state name="CERT_ISSUED"
+    <state name="METADATA_PERSISTED"
             autorun="yes">
         <description>I18N_OPENXPKI_WF_STATE_SMARTCARD_PERSONALIZATION_V4_CERT_ISSUED</description>
         <action name="scpers_register_cert_in_datapool" resulting_state="CERT_IN_DATAPOOL">

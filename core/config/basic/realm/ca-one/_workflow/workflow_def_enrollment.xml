@@ -114,7 +114,12 @@
         </action>
     </state>
 
-    <state name="CERT_ISSUED"
+	<state name="CERT_ISSUED" autorun="yes">
+	    <action name="I18N_OPENXPKI_WF_ACTION_PERSIST_METADATA"
+	              resulting_state="METADATA_PERSISTED" />
+	</state> 
+
+    <state name="METADATA_PERSISTED"
             autorun="yes">
         <description>I18N_OPENXPKI_WF_STATE_ENROLLMENT_CERT_ISSUED</description>
         <action name="enroll_fork_publish" resulting_state="CLEANUP">
