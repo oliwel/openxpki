@@ -1,17 +1,17 @@
-OXI.TextView = OXI.View.extend({
+OXI.KeyValueView = OXI.View.extend({
     
-    jsClassName:'OXI.TextView',
-    templateName: "text-view",
+    jsClassName:'OXI.KeyValueView',
+    templateName: "keyvalue-view",
     
     content:null,
     label:null,
-    description:null,
+    data:null,
 
     init:function(){
         Ember.debug('OXI.TextView :init ');
         this._super();
         this.label = this.content.label;
-        this.description = this.content.description;
+        this.data = this.content.data;
     }
 
 });

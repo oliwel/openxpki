@@ -2,6 +2,66 @@
 defines the OXI Application classs
 */
 
+
+
+OXI.Route = Ember.Route.extend({
+
+    mainActionKey:null,
+    subActionKey:null,
+    
+    
+    activate:function(){
+        js_debug('App.Route activate') ;
+    },
+    setupController: function(controller) {
+        //js_debug('App.Route.setupController: route name: '+ this.routeName);
+        //js_debug(this.router.router.targetHandlerInfos,2);
+        var routes = this.router.router.targetHandlerInfos;
+        var i;
+        var final_route = routes[routes.length-1].name;
+
+        if(final_route == this.routeName){
+            //js_debug('final route reached:'+final_route);
+            
+            if(final_route == 'forward'){
+                this.subActionKey = App.get('original_target');
+                js_debug('forward to original target: '+this.subActionKey);
+                App.set('original_target','');
+            }else{
+            
+                var p = this.routeName.indexOf('.');
+                if(p>0){
+    
+                    this.mainActionKey = this.routeName.substr(0,p);
+                    this.subActionKey = this.routeName.substr(p+1);
+                }else{
+                    this.subActionKey =  this.routeName;
+                }
+            }
+        }
+    },
+
+    renderTemplate: function(controller, model) {
+        
+
+        if(this.subActionKey){
+            js_debug('App.Route.renderTemplate for '+this.subActionKey);
+            //controller.set('current_action', this.subActionKey);
+
+            var Route = this;
+            var pageKey = (this.subActionKey=='index')? this.mainActionKey:this.subActionKey;
+            if(!pageKey || pageKey == 'index' ){//this is the case when called without hashtagin URI
+                pageKey ='home';
+            }
+            App.set('MainView',OXI.SectionViewContainer.create());
+            this.render('main-content',{outlet:'main-content'});
+            App.loadPageInfoFromServer(pageKey);
+        }
+    }
+
+});
+
+
 OXI.Application = Ember.Application.extend(
 {
     LOG_TRANSITIONS: true,
@@ -34,28 +94,49 @@ OXI.Application = Ember.Application.extend(
     SideNavs : {},
     CurrentSideNav : null,
     sideTreeStructure: {},
-
-
+    
+    
+    _actualPageRenderCount:0,
+    _actualPageKey: null,
 
     ApplicationController : Ember.Controller.extend({
         updateCurrentPath: function() {
             
-            //js_debug('ApplicationController:updateCurrentPath '+this.get('currentPath'));
+            js_debug('ApplicationController:updateCurrentPath '+this.get('currentPath'));
             App.setCurrentPath( this.get('currentPath'));
-        }.observes('currentPath')
+        }.observes('currentPath'),
+        
+        
+        
     }),
 
-    BadUrlRoute: Ember.Route.extend({
+    BadUrlRoute : OXI.Route.extend({
+        
+        originalTarget:null,
+        subActionKey:null,
+        
         beforeModel: function(transition) {
             Ember.debug('BadUrlRoute '+location.hash+' check transition');
-
-            App.set('original_target',location.hash.substr(1));
+            this.originalTarget = location.hash.substr(1);
+            
             if(!App.user_logged_in){
+                App.set('original_target',orig_target);
+                js_debug('original_target stored: ' + orig_target);
                 this.transitionTo('login');
             }else{
-                this.transitionTo('notfound');
+                if(this.originalTarget .indexOf('/') == 0){
+                    this.subActionKey  = this.originalTarget .substr(1);   
+                }
+                
+                //this.transitionTo('forward');
             }
-        }
+        },
+        
+        setupController: function(controller) {
+        },
+        
+        
+        
     }),
 
     NotfoundRoute: Ember.Route.extend({
@@ -70,7 +151,22 @@ OXI.Application = Ember.Application.extend(
         }
     }),
 
-
+    Router: Ember.Router.extend({
+        
+        
+        didTransition: function(infos){
+            this._super(infos);
+            var path = Ember.Router._routePath(infos);
+            //this hook is triggered if a link has been clicked on the page
+            js_debug('didTransition ' + path); 
+            //we check, if the content for the current route(=server page) has been changed (via form actions etc)
+            //if so, we reload page infos from server (otherwise, the re-rendered püagecontent (e.e. form-submits, searchresults) will not be changed)
+            if(App.get('_actualPageRenderCount')>1){
+                 App.reloadPageInfoFromServer();  
+            }
+            
+        }
+    }),
 
     ready: function() {
         Ember.debug('Application ready');
@@ -81,6 +177,7 @@ OXI.Application = Ember.Application.extend(
         this.rootElement = OXI.Config.get('rootElement');
         this.serverUrl = OXI.Config.get('serverUrl');
         this.cookieName = OXI.Config.get('cookieName');
+        this._actualPageRenderCount = 0;
     },
 
     logout:function(){
@@ -127,17 +224,68 @@ OXI.Application = Ember.Application.extend(
         alert(msg);
         js_debug(data);
     },
+    
+    reloadPageInfoFromServer: function(){
+        js_debug('App.reloadPageInfoFromServer');
+        this.loadPageInfoFromServer(this._actualPageKey);
+    },
+    
+    loadPageInfoFromServer: function(pageKey){
+        var App = this;
+        js_debug('App.loadPageInfoFromServer: '+pageKey);
+        this.set('_actualPageRenderCount',0);
+        this.set('_actualPageKey',pageKey);
+        this.callServer({page:pageKey})
+            .success(function(json){
+                if(pageKey == 'logout'){
+                    App.logout();
+                    App.reloadPage('login');
+                }else{
+                    App.renderPage(json);
+                }
+            });
+    },
+    
+    renderPage: function(json){
+        js_debug({'App.renderPage':json},3);
+        if(json.status){
+            this.MainView.setStatus(json.status);
+        }
+        if(json.page){
+            this.MainView.initSections(json);
+            this.set('_actualPageRenderCount',this._actualPageRenderCount +1);
+        }
+        
+        
+        
+        //this.MainView.get('controller').send('routeContentChanged', true);
+        
+        if(json.reloadTree){
+            var timeout = (json.status)?1000:0;
+            window.setTimeout(function(){App.reloadPage(json.goto);},timeout);
+            return;   
+        }else if(json.goto){
+            //goto solo...   
+            var timeout = (json.status)?1000:0;
+            window.setTimeout(function(){App.goto(json.goto);},timeout);
+        }
+    },
+    
+    goto: function(target){
+        try{
+            target = target.replace(/\./g,'/');
+            if(target.indexOf('/')!=0){
+                target = '/'+target;
+            }
+            location.hash=target;
+        }catch(e){
+        }
+    },
 
     reloadPage: function(goto){
         js_debug('reloadPage!');
-        if(!goto) goto='/';
-        try{
-            if(goto.indexOf('/')!=0){
-                goto = '/'+goto;
-            }
-            location.hash=goto;
-        }catch(e){
-
+        if(goto){
+            this.goto(goto);
         }
         js_debug('do reload');
         location.reload();
@@ -169,6 +317,7 @@ OXI.Application = Ember.Application.extend(
 
     setCurrentPath:function(currentPath){
         js_debug('updateCurrentPath: '+ currentPath );
+        this.set('_actualPageRenderCount',0);
         this.set('currentPath',currentPath);
         var currentRootPath = currentPath.split('.')[0];
         if(currentRootPath =='index')currentRootPath='home';
@@ -184,13 +333,16 @@ OXI.Application = Ember.Application.extend(
             this.route('login');
             this.route('logout');
             this.route('notfound');
+            this.route('welcome');
+            this.route('forward');
+            
             App.set('NavArrayController', Ember.ArrayController.create({
                 content: Ember.A([])
             }));
             var i,j;
             for(i=0;i<App.sideTreeStructure.length;i++){
                 var ressource = App.sideTreeStructure[i];
-                Ember.debug('add to Top Nav: '+ressource.key);
+                //Ember.debug('add to Top Nav: '+ressource.key);
                 if(!ressource.entries || !ressource.entries.length){
                     this.route(ressource.key);
                     App.NavArrayController.pushObject(

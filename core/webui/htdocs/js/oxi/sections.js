@@ -5,6 +5,9 @@ OXI.SectionViewContainer = OXI.View.extend({
     templateName: "sections",
     SectionViewList:[],
     MessageView:null,
+    
+    label:null,
+    description:null,
 
     init:function(){
         //Ember.debug('SectionViewContainer init ');
@@ -25,21 +28,20 @@ OXI.SectionViewContainer = OXI.View.extend({
     initSections:function(json){
         //js_debug(json,2);
         this.set('SectionViewList',[]);
-        this.set('page_label','');
-        this.set('page_desc','');
+        this.set('label','');
+        this.set('desc','');
         if(json.page){
             if(json.page.label){
-                this.set('page_label', json.page.label);
+                this.set('label', json.page.label);
             }
-            if(json.page.desc){
-                this.set('page_desc', json.page.desc);
+            if(json.page.description){
+                this.set('description', json.page.description);
             }
         }
 
         
         this.setStatus(json.status);
        
-
         //die einzelnen sections abbilden
         if(json.main){
             var i;
@@ -109,6 +111,11 @@ OXI.SectionView = OXI.View.extend({
             {content:this.sectionData.content}
             );
             break;
+            case 'keyvalue':
+            ContentView = OXI.KeyValueView.create(
+            {content:this.sectionData.content}
+            );
+            break;
             case 'grid':
             ContentView = OXI.GridView.create(
             {action:this.sectionData.action, content:this.sectionData.content}
@@ -135,7 +142,7 @@ OXI.MessageView = OXI.View.extend({
     setMessage:function(message,level){
         this.set('level',level);
         this.set('message',message);
-        this.debug({level:level,message:message});
+        //this.debug({level:level,message:message});
     },
 
     reset:function(){
