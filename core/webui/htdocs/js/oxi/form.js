@@ -547,6 +547,8 @@ OXI.TextAreaContainer = OXI.FormFieldContainer.extend({
     _lastItem: '' //avoid trailing commas
 });
 
+
+
 OXI.PulldownContainer = OXI.FormFieldContainer.extend({
     templateName: "form-selectfield",
     jsClassName:'OXI.PulldownContainer',
@@ -554,12 +556,27 @@ OXI.PulldownContainer = OXI.FormFieldContainer.extend({
     FreeTextView: null,
     hasFreetext:false,
     _freeTextKey : '_freetext_',
+    
+    editable:false,
+    optionAjaxSource:null,
+    _isComboBox:false,
 
 
     init:function(){
         //Ember.debug('OXI.PulldownContainer :init '+this.fieldDef.label);
         this.set('hasFreetext',false);
+        this.set('editable',false);
         this._super();
+        if(this.fieldDef.editable){
+            this.set('editable',true);
+            this.set('_isComboBox',true);   
+        }
+        
+        if(typeof this.fieldDef.options == 'string'){
+            this.set('_isComboBox',true);   
+            this.set('optionAjaxSource',this.fieldDef.options);
+            this.fieldDef.options = [];
+        }
 
         if(this.fieldDef.freetext){
 
@@ -580,6 +597,11 @@ OXI.PulldownContainer = OXI.FormFieldContainer.extend({
     */
 
     getValue:function(){
+        if(this._isComboBox){
+            var v = this.$('select').combobox('getValue');   
+            this.debug({combo: this.fieldname, combovalue: v});
+            return v;
+        }
         var sel_val = this._getSelected();
         return (sel_val == this._freeTextKey)? this.FreeTextView.value : sel_val;
     },
@@ -595,6 +617,24 @@ OXI.PulldownContainer = OXI.FormFieldContainer.extend({
             this.FreeTextView.toggle((this._getSelected() == this._freeTextKey));
         }
     },
+    
+    didInsertElement: function(){
+
+        this._super();
+        if(this._isComboBox){
+            js_debug(this.fieldname+' is editable');
+            var comboOptions = {queryDelay: 300,editable:this.editable};
+            if(this.optionAjaxSource){
+                comboOptions.ajaxSource = App.serverUrl + '?action='+this.optionAjaxSource;
+            }
+            
+            this.$('select').addClass('form-control-combo'); 
+            this.$('select').combobox(comboOptions);  
+            
+        }
+    },
+    
+    
 
     _lastItem: '' //avoid trailing commas
 
@@ -618,11 +658,12 @@ OXI.Select = Ember.Select.extend(
     optionValuePath: 'content.value',
     classNames: ['form-control'] ,
     prompt:null,
-
+    
     init:function(){
         //Ember.debug('OXI.Select :init ');
         this._super();
-        this.content = Ember.A(this.options);
+        var options = (typeof this.options == 'object')?this.options:[];
+        this.content = Ember.A(options);
         if(typeof this.prompt != 'undefined' && this.prompt=='' ){
             this.prompt = ' ';//display white option
         }

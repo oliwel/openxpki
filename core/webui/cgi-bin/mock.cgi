@@ -72,6 +72,11 @@ sub handle {
         $res = handle_request_cert( $q,$session,$action );
     }elsif ($q->param('page')) {
         $res = {'page' => $q->param('page') };
+    }elsif($action eq 'cert_search!options'){
+        
+        #ajax autocompleter options
+        return {options => [{value=>'c1',label=>'Cert 1'},{value=>'c2',label=>'Cert 2'},{value=>'c3',label=>'Cert 3'}]};
+        
     }
 
 
@@ -148,7 +153,7 @@ sub handle {
 
         },
         
-        xright => [
+        right => [
                     {type => 'text',
                      content => {
                         label => 'Bla',#Right pane 1',
@@ -168,6 +173,9 @@ sub handle {
                 
                 fields => [
                 { name => 'subject', label => 'Subject', type => 'text',is_optional => 1 },
+                { name => 'cert_purpose', label => 'Purpose',prompt=>'type in or select a value', editable=>1, type => 'select',options=>[{value=>'p1',label=>'Purpose 1'},{value=>'p2',label=>'Purpose 2'},{value=>'p3',label=>'Purpose 3'}] },
+                { name => 'cert_id', label => 'Cert Id (ajax)',is_optional => 1, prompt=>'type in or select a value', type => 'select',options=> 'cert_search!options' },
+                        
                 { name => 'issuer', label => 'Issuer', type => 'text',is_optional => 1,clonable=>1, value => ['Issuer 1','Issuer 2'] },
                 ]
             }
@@ -644,7 +652,7 @@ sub handle_certsearch {
 
     return {
         page => {label => 'Your Searchresult',target=>'main'},
-        status => {level => 'info',message=> 'given issuer: '.join(', ', @issuer)},
+        status => {level => 'info',message=> 'cert: '.$q->param('cert_id').', purpose: '.$q->param('cert_purpose').', given issuer: '.join(', ', @issuer)},
         
         main => [
                 #first section
