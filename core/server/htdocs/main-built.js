@@ -35884,265 +35884,7 @@ define('templates/templates', [
         ];
         helpers = this.merge(helpers, Ember.Handlebars.helpers);
         data = data || {};
-        var buffer = '', stack1, escapeExpression = this.escapeExpression, self = this;
-        function program1(depth0, data) {
-            var stack1;
-            stack1 = helpers.each.call(depth0, 'btn', 'in', 'content.content.buttons', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                inverse: self.program(7, program7, data),
-                fn: self.program(2, program2, data),
-                contexts: [
-                    depth0,
-                    depth0,
-                    depth0
-                ],
-                types: [
-                    'ID',
-                    'ID',
-                    'ID'
-                ],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            } else {
-                data.buffer.push('');
-            }
-        }
-        function program2(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<div class="row stacked-buttons"><div class="col-xs-4">');
-            stack1 = helpers['if'].call(depth0, 'btn.href', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                inverse: self.program(5, program5, data),
-                fn: self.program(3, program3, data),
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</div><div class="col-xs-8 btn-bt-margin">');
-            stack1 = helpers._triageMustache.call(depth0, 'btn.description', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</div></div>');
-            return buffer;
-        }
-        function program3(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<a ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'href': 'btn.href' },
-                hashTypes: { 'href': 'STRING' },
-                hashContexts: { 'href': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' target="_blank" ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'title': 'btn.tooltip' },
-                hashTypes: { 'title': 'STRING' },
-                hashContexts: { 'title': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' class="btn btn-block btn-default">');
-            stack1 = helpers._triageMustache.call(depth0, 'btn.label', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</a>');
-            return buffer;
-        }
-        function program5(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<button ');
-            data.buffer.push(escapeExpression(helpers.action.call(depth0, 'execute', 'btn', {
-                hash: { 'on': 'click' },
-                hashTypes: { 'on': 'STRING' },
-                hashContexts: { 'on': depth0 },
-                contexts: [
-                    depth0,
-                    depth0
-                ],
-                types: [
-                    'STRING',
-                    'ID'
-                ],
-                data: data
-            })));
-            data.buffer.push(' ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'title': 'btn.tooltip' },
-                hashTypes: { 'title': 'STRING' },
-                hashContexts: { 'title': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' class="btn btn-block btn-default">');
-            stack1 = helpers._triageMustache.call(depth0, 'btn.label', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</button>');
-            return buffer;
-        }
-        function program7(depth0, data) {
-            var buffer = '';
-            return buffer;
-        }
-        function program9(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<div class="btn-group">');
-            stack1 = helpers.each.call(depth0, 'btn', 'in', 'content.content.buttons', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                inverse: self.program(7, program7, data),
-                fn: self.program(10, program10, data),
-                contexts: [
-                    depth0,
-                    depth0,
-                    depth0
-                ],
-                types: [
-                    'ID',
-                    'ID',
-                    'ID'
-                ],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</div>');
-            return buffer;
-        }
-        function program10(depth0, data) {
-            var stack1;
-            stack1 = helpers['if'].call(depth0, 'btn.href', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                inverse: self.program(13, program13, data),
-                fn: self.program(11, program11, data),
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            } else {
-                data.buffer.push('');
-            }
-        }
-        function program11(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<a ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'href': 'btn.href' },
-                hashTypes: { 'href': 'STRING' },
-                hashContexts: { 'href': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' target="_blank" ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'title': 'btn.tooltip' },
-                hashTypes: { 'title': 'STRING' },
-                hashContexts: { 'title': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' class="btn btn-default">');
-            stack1 = helpers._triageMustache.call(depth0, 'btn.label', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</a>');
-            return buffer;
-        }
-        function program13(depth0, data) {
-            var buffer = '', stack1;
-            data.buffer.push('<button ');
-            data.buffer.push(escapeExpression(helpers.action.call(depth0, 'execute', 'btn', {
-                hash: { 'on': 'click' },
-                hashTypes: { 'on': 'STRING' },
-                hashContexts: { 'on': depth0 },
-                contexts: [
-                    depth0,
-                    depth0
-                ],
-                types: [
-                    'STRING',
-                    'ID'
-                ],
-                data: data
-            })));
-            data.buffer.push(' ');
-            data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
-                hash: { 'title': 'btn.tooltip' },
-                hashTypes: { 'title': 'STRING' },
-                hashContexts: { 'title': depth0 },
-                contexts: [],
-                types: [],
-                data: data
-            })));
-            data.buffer.push(' class="btn btn-default">');
-            stack1 = helpers._triageMustache.call(depth0, 'btn.label', {
-                hash: {},
-                hashTypes: {},
-                hashContexts: {},
-                contexts: [depth0],
-                types: ['ID'],
-                data: data
-            });
-            if (stack1 || stack1 === 0) {
-                data.buffer.push(stack1);
-            }
-            data.buffer.push('</button>');
-            return buffer;
-        }
+        var buffer = '', escapeExpression = this.escapeExpression;
         data.buffer.push('<h3 ');
         data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {
             hash: { '': 'content.label' },
@@ -36161,21 +35903,7 @@ define('templates/templates', [
             types: [],
             data: data
         })));
-        data.buffer.push('></div><div class="oxi-button-container">');
-        stack1 = helpers['if'].call(depth0, 'buttonsWithDescription', {
-            hash: {},
-            hashTypes: {},
-            hashContexts: {},
-            inverse: self.program(9, program9, data),
-            fn: self.program(1, program1, data),
-            contexts: [depth0],
-            types: ['ID'],
-            data: data
-        });
-        if (stack1 || stack1 === 0) {
-            data.buffer.push(stack1);
-        }
-        data.buffer.push('</div>');
+        data.buffer.push('></div>');
         return buffer;
     });
     T['components/oxivalue-format'] = t(function anonymous(Handlebars, depth0, helpers, partials, data) {
@@ -36260,50 +35988,6 @@ define('pods/oxivalue-format/component', [
         formatedValue: function () {
             return this.get('types')[this.get('content.format') || 'text'](this.get('content.value'));
         }.property('content.format', 'content.value')
-    });
-    __exports__.__default__ = Component;
-});
-define('pods/oxisection-text/component', [
-    'vendor/ember',
-    'exports'
-], function (__dependency0__, __exports__) {
-    'use strict';
-    var Em = __dependency0__.__default__;
-    var Component;
-    Component = Em.Component.extend({
-        click: function (evt) {
-            if (evt.target.tagName === 'A' && evt.target.target !== '_blank') {
-                evt.stopPropagation();
-                evt.preventDefault();
-                return this.container.lookup('route:openxpki').sendAjax({
-                    data: {
-                        page: evt.target.href.split('#')[1],
-                        target: evt.target.target
-                    }
-                });
-            } else if (evt.target.tagName === 'BUTTON') {
-                return $(evt.target).addClass('btn-loading');
-            }
-        },
-        buttonsWithDescription: function () {
-            var buttons;
-            buttons = this.get('content.content.buttons');
-            if (buttons) {
-                return buttons.isAny('description');
-            } else {
-                return false;
-            }
-        }.property('content.content.buttons.@each.description'),
-        actions: {
-            execute: function (btn) {
-                if (btn.action) {
-                    return this.container.lookup('route:openxpki').sendAjax({ data: { action: btn.action } });
-                } else {
-                    console.log('Transition');
-                    return this.container.lookup('route:openxpki').transitionTo('openxpki', btn.page);
-                }
-            }
-        }
     });
     __exports__.__default__ = Component;
 });
@@ -37420,12 +37104,11 @@ define('ember-app', [
     'pods/oxisection-grid/component',
     'pods/oxisection-keyvalue/component',
     'pods/oxisection-main/component',
-    'pods/oxisection-text/component',
     'pods/oxivalue-format/component',
     'routers/main',
     'templates/templates',
     'exports'
-], function (__dependency0__, __dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __dependency15__, __dependency16__, __dependency17__, __dependency18__, __dependency19__, __exports__) {
+], function (__dependency0__, __dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __dependency15__, __dependency16__, __dependency17__, __dependency18__, __exports__) {
     'use strict';
     var ApplicationController = __dependency0__.__default__;
     var ApplicationView = __dependency1__.__default__;
@@ -37443,10 +37126,9 @@ define('ember-app', [
     var OxisectionGridComponent = __dependency13__.__default__;
     var OxisectionKeyvalueComponent = __dependency14__.__default__;
     var OxisectionMainComponent = __dependency15__.__default__;
-    var OxisectionTextComponent = __dependency16__.__default__;
-    var OxivalueFormatComponent = __dependency17__.__default__;
-    var MainRouter = __dependency18__.__default__;
-    var TemplatesTemplate = __dependency19__.__default__;
+    var OxivalueFormatComponent = __dependency16__.__default__;
+    var MainRouter = __dependency17__.__default__;
+    var TemplatesTemplate = __dependency18__.__default__;
     var App = {
             ApplicationController: ApplicationController,
             ApplicationView: ApplicationView,
@@ -37464,7 +37146,6 @@ define('ember-app', [
             OxisectionGridComponent: OxisectionGridComponent,
             OxisectionKeyvalueComponent: OxisectionKeyvalueComponent,
             OxisectionMainComponent: OxisectionMainComponent,
-            OxisectionTextComponent: OxisectionTextComponent,
             OxivalueFormatComponent: OxivalueFormatComponent,
             MainRouter: MainRouter,
             TemplatesTemplate: TemplatesTemplate
