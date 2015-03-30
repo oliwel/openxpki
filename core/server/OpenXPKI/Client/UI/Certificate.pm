@@ -255,7 +255,7 @@ sub init_mine {
     my $query = {          
         CERT_ATTRIBUTES => [{ 
             KEY => 'system_cert_owner', 
-            VALUE =>  $self->_client()->session()->param('user')->{name}, 
+            VALUE =>  $self->_session->param('user')->{name}, 
             OPERATOR => 'EQUAL' 
         }]
     };
@@ -351,7 +351,7 @@ sub init_detail {
 
     # check if this is a entity certificate from the current realm
     my $is_local_entity = 0;
-    if ($cert->{CSR_SERIAL} && $cert->{PKI_REALM} eq $self->_client()->session()->param('pki_realm')) {
+    if ($cert->{CSR_SERIAL} && $cert->{PKI_REALM} eq $self->_session->param('pki_realm')) {
         $self->logger()->debug("cert is local entity");
         $is_local_entity = 1;
     }

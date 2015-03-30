@@ -45,7 +45,6 @@
       </validator>
       <validator name="I18N_OPENXPKI_WF_VAL_CERTSUBJECTPARTS">
         <arg>$cert_profile</arg>
-        <arg>$cert_profile_id</arg>
         <arg>$cert_subject_style</arg>
         <arg>$cert_subject_parts</arg>
       </validator>
