@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS `certificate` (
   KEY (`issuer_identifier`),
   KEY (`subject`),
   KEY (`status`),
-  KEY (`pki_realm`,`req_key`)
+  KEY (`pki_realm`,`req_key`),
+  KEY (`notbefore`),
+  KEY (`notafter`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -92,7 +94,8 @@ CREATE TABLE IF NOT EXISTS `certificate_attributes` (
   KEY (`attribute_contentkey`),
   KEY (`attribute_value`),
   KEY (`identifier`),
-  KEY (`identifier`,`attribute_contentkey`)
+  KEY (`identifier`,`attribute_contentkey`),
+  KEY (`attribute_contentkey`,`attribute_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -112,7 +115,8 @@ CREATE TABLE IF NOT EXISTS `crl` (
   `publication_date` int unsigned DEFAULT NULL,
   PRIMARY KEY (`issuer_identifier`,`crl_key`),
   KEY (`issuer_identifier`),
-  KEY (`pki_realm`)
+  KEY (`pki_realm`),
+  KEY (`issuer_identifier`,`last_update`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -192,12 +196,13 @@ CREATE TABLE IF NOT EXISTS `datapool` (
   `pki_realm` varchar(255) NOT NULL,
   `namespace` varchar(255) NOT NULL,
   `datapool_key` varchar(255) NOT NULL,
-  `datapool_value` text,
+  `datapool_value` longtext,
   `encryption_key` varchar(255) DEFAULT NULL,
-  `notafter` decimal(49,0) DEFAULT NULL,
-  `last_update` decimal(49,0) DEFAULT NULL,
+  `notafter` int unsigned DEFAULT NULL,
+  `last_update` int unsigned DEFAULT NULL,
   PRIMARY KEY (`pki_realm`,`namespace`,`datapool_key`),
-  KEY (`pki_realm`,`namespace`)
+  KEY (`pki_realm`,`namespace`),
+  KEY (`notafter`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -236,9 +241,11 @@ CREATE TABLE IF NOT EXISTS `workflow` (
   PRIMARY KEY (`workflow_id`),
   KEY (`workflow_state`),
   KEY (`pki_realm`),
-  KEY (`workflow_type`),
+  KEY (`pki_realm`,`workflow_type`),
   KEY (`workflow_proc_state`,`workflow_wakeup_at`),
-  KEY (`workflow_proc_state`,`workflow_reap_at`)
+  KEY (`workflow_proc_state`,`workflow_reap_at`).
+  KEY (`pki_realm`,`workflow_state`),
+  KEY (`pki_realm`,`workflow_proc_state`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -255,7 +262,8 @@ CREATE TABLE IF NOT EXISTS `workflow_attributes` (
   PRIMARY KEY (`workflow_id`,`attribute_contentkey`),
   KEY (`workflow_id`),
   KEY (`attribute_contentkey`),
-  KEY (`attribute_value`)
+  KEY (`attribute_value`),
+  KEY (`attribute_contentkey`,`attribute_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -302,12 +310,12 @@ CREATE TABLE IF NOT EXISTS `application_log` (
   `application_log_id` bigint(20) unsigned NOT NULL,
   `logtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `workflow_id` decimal(49,0) NOT NULL,
-  `priority` int(3) DEFAULT 999,
+  `priority` int(11) DEFAULT 0,
   `category` varchar(255) NOT NULL,
   `message` longtext,
   PRIMARY KEY (`application_log_id`),
   KEY (`workflow_id`),
-  KEY (`workflow_id`,`priority`)
+  KEY (`workflow_id`,`category`,`priority`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
