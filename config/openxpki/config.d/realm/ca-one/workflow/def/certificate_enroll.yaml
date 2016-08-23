@@ -1,0 +1,233 @@
+head:
+    prefix: enroll
+    label: I18N_OPENXPKI_UI_WORKFLOW_TYPE_CERT_ENROLL_LABEL
+    description: I18N_OPENXPKI_UI_WORKFLOW_TYPE_CERT_ENROLL_DESC
+
+state:
+    INITIAL:
+        action: initialize global_load_policy > CREATED
+
+    CREATED:
+        autorun: 1
+        action:
+          - global_check_authorized_signer > CHECK_AUTHORIZATION ? global_is_signed_request
+          - global_set_error_not_authenticated > FAILURE ? !is_manual_authentication_allowed !global_is_signed_request
+          - global_noop > MANUAL_APPROVAL ? !global_is_signed_request is_manual_authentication_allowed
+
+
+    CHECK_AUTHORIZATION:
+        autorun: 1
+        action:
+          - global_set_error_signer_not_authorized > MANUAL_AUTHORIZATION ? !is_requestor_authorized is_manual_authentication_allowed
+          - global_set_error_signer_not_authorized > FAILURE ? !is_requestor_authorized !is_manual_authentication_allowed
+          - global_set_error_signer_expired > FAILURE ? is_requestor_authorized is_requestor_expired
+          - global_set_error_signer_revoked > FAILURE ? is_requestor_revoked is_requestor_authorized !is_requestor_expired
+          - global_noop > AUTHORIZED ? is_requestor_authorized !is_requestor_revoked !is_requestor_expired
+
+    MANUAL_AUTHORIZATION:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ENROLL_MANUAL_AUTHORIZATION_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ENROLL_MANUAL_AUTHORIZATION_DESC
+        action: 
+          - reject_request > FAILURE
+          - accept_request > AUTHORIZED
+        output:
+          - server
+          - interface
+          - csr_subject
+          - comment
+          - cert_profile
+          - signer_cert_identifier
+          - signer_revoked
+          - signer_trusted
+          - signer_authorized
+          - signer_validity_ok
+
+        button:
+          accept_request:
+            format: expected
+          reject_request:
+            format: failure
+ 
+    AUTHORIZED:
+        autorun: 1
+        action: global_noop > PERFORM_POLICY_CHECK
+
+    PERFORM_POLICY_CHECK:
+        autorun: 1
+        action: global_noop > CHECK_POLICY_VIOLATION
+
+    CHECK_POLICY_VIOLATION:
+        autorun: 1
+        action:
+          - global_set_error_code_policy_violated > PENDING_POLICY ? has_policy_violations
+          - global_noop > ELIGIBILITY ? !has_policy_violations
+
+    PENDING_POLICY:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ENROLL_PENDING_POLICY_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ENROLL_PENDING_POLICY_DESC
+        action:
+          - reevaluate_policy > PERFORM_POLICY_CHECK
+          - override_policy > ELIGIBILITY
+          - reject_request global_set_error_rejected > FAILURE
+        button:
+          override_policy:
+            format: alternative
+          reevaluate_policy:
+            format: expected
+          reject_request:
+            format: failure
+
+    ELIGIBILITY:
+        autorun: 1
+        action: check_eligibility > CALCULATE_APPROVALS
+        
+    APPROVAL:
+        autorun: 1
+
+
+    PREPARED:
+        autorun: 1
+        action:
+          - global_nice_issue_certificate > SUCCESS
+        
+    SUCCESS:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_CERT_ENROLL_SUCCESS_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_CERT_ENROLL_SUCCESS_DESC
+        
+action: 
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetSource
+        param:
+            source: api
+        input:
+            - pkcs10
+            - server
+            - interface
+            - csr_subject
+            - signer_cert
+            - comment
+            - cert_profile
+
+    accept_request:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ENROLL_ACCEPT_REQUEST_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ENROLL_ACCEPT_REQUEST_DESC
+
+    reject_request:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CSR_REJECT_REQUEST_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CSR_REJECT_REQUEST_DESC
+        
+    override_policy:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ENROLL_OVERRIDE_POLICY_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ENROLL_OVERRIDE_POLICY_DESC
+
+    reevaluate_policy:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContext
+        param:
+            check_policy_duplicate: ''
+            check_policy_dns: ''
+        
+
+    check_eligibility:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::CheckEligibility
+        param:
+            _map_config_path: "[% context.interface %].[% context.server %].eligibility" 
+            target_key: is_eligble
+            raw_result: eligibility_result
+
+
+    persist_csr:
+        class: OpenXPKI::Server::Workflow::Activity::CSR::PersistRequest
+        param:
+            csr_type: pkcs10
+        
+condition:
+    is_requestor_authorized:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{signer_trusted} and $context->{signer_authorized})
+
+    is_requestor_validity_ok:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{signer_validity_ok})
+
+    is_requestor_revoked:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{signer_revoked})
+
+    is_manual_authentication_allowed:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: $context->{p_allow_man_authen};
+
+    is_manual_approval_allowed:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: $context->{p_allow_man_approv};
+
+    has_policy_violations:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{check_policy_dns} || $context->{check_policy_duplicate});
+
+
+acl:
+    Anonymous:
+        creator: self
+
+    CA Operator:
+        creator: any
+
+    RA Operator:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1
+        history: 1
+        techlog: 1
+        context: 1
+
+
+    System:
+        creator: self
+
+    User:
+        creator: self
+
+ignore:
+
+#Keysize und hash + (Policy Check -> Validator)
+#Subject 
+#Extact profile from CSR extension + apply map
+#Challenge Password into context
+
+
+#Split CSR subject , set cert_subject and cert_san
+
+#translate profile + apply subject rendering
+
+#Get mode from signer cert
+
+#Check pkcs7 signature
+
+#Map url params to context
+
+#cert count / renewal certificate 
+
+    verify_pkcs7:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::VerifyPKCS7
+        param:
+            pkcs7: $_pkcs7
+
+    parse_pkcs10:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::ParsePKCS10
+        
+    map_url_param:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::InjectExtraParam;
+        param:
+            data: $_url_params
+            prefix: url_ 
