@@ -104,11 +104,15 @@ sub execute
     my $key = $default_token->command($command);
     ##! 16: 'key: ' . $key
 
+=cut LOGMIGRATE
     CTX('log')->log(
     	MESSAGE => 'Created ' . $key_type . ' private key for ' . $context->param('creator'),
     	PRIORITY => 'info',
     	FACILITY => 'audit',
 	);
+=cut LOGMIGRATE
+    CTX('log')->audit()->info('Created ' . $key_type . ' private key for ' . $context->param('creator'));
+    #LOGMIGRATE 
 
     $context->param('private_key' => $key);
 

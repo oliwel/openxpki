@@ -27,30 +27,42 @@ sub execute {
             ##! 8: 'Load for server ' . $interface .  ' / ' .  $server
             $policy_params = $config->get_hash([ $interface, $server, 'policy' ]);
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "Server or interface not set in LoadPolicy",            
                 PRIORITY => 'warn',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("Server or interface not set in LoadPolicy");
+            #LOGMIGRATE 
         }
     }
 
     if (!$policy_params) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "No policy params set in LoadPolicy",            
             PRIORITY => 'warn',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn("No policy params set in LoadPolicy");
+        #LOGMIGRATE 
     } else {
         foreach my $key (keys (%{$policy_params})) {
             $context->param( "p_$key" => $policy_params->{$key} );
         }
     
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Server policy loaded",            
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Server policy loaded");
+        #LOGMIGRATE 
     }
     return 1;
 }

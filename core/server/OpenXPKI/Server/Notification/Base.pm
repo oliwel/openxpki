@@ -84,11 +84,15 @@ sub _render_template_file {
     
     ##! 16: 'Load template: ' . $filename
     if (! -e $filename  ) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Template file missing $filename  ",
             PRIORITY => "warn",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->warn("Template file missing $filename  ");
+        #LOGMIGRATE 
         return undef;
     }
     
@@ -98,11 +102,15 @@ sub _render_template_file {
     
     my $tt = OpenXPKI::Template->new();    
     if (!$tt->process(\$template, $vars, \$output)) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Error parsing templatefile ($filename): " . $tt->error(),
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Error parsing templatefile ($filename): " . $tt->error());
+        #LOGMIGRATE 
         return; 
     }
     
@@ -129,11 +137,15 @@ sub _render_template {
     
     my $tt = OpenXPKI::Template->new();        
     if (!$tt->process(\$template, $vars, \$output)) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Error parsing template ($template): " . $tt->error(),
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Error parsing template ($template): " . $tt->error());
+        #LOGMIGRATE 
         return; 
     }
     

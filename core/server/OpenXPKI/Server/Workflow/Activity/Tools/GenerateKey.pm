@@ -71,11 +71,15 @@ sub execute
          PARAMS     => $param,
     });
 
+=cut LOGMIGRATE
     CTX('log')->log(
     	MESSAGE => 'Created ' . $key_alg . ' private key for ' . $context->param('creator'),
     	PRIORITY => 'info',
     	FACILITY => 'audit',
 	);
+=cut LOGMIGRATE
+    CTX('log')->audit()->info('Created ' . $key_alg . ' private key for ' . $context->param('creator'));
+    #LOGMIGRATE 
 
     my $target_key = $self->param('target_key') || 'private_key';
 

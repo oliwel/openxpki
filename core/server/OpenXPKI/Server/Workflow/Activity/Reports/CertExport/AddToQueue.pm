@@ -32,11 +32,15 @@ sub execute {
        $export->{$key} = $self->param($key) || '';  
     }    
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "prepare cert ".$context->param( 'cert_identifier' )." for export",
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("prepare cert ".$context->param( 'cert_identifier' )." for export");
+    #LOGMIGRATE 
 
     ##! 16: 'Mapping attributes: ' . Dumper $export  
     

@@ -34,11 +34,15 @@ sub evaluate {
         }
     );
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Cert status is ".$cert->{status},
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Cert status is ".$cert->{status});
+    #LOGMIGRATE 
 
     ##! 16: 'status: ' . $cert->{'STATUS'}
 

@@ -67,16 +67,24 @@ sub execute {
         my $ee = $EVAL_ERROR;
         # Catch exception as "pause" if configured
         if ($self->param('pause_on_error')) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "NICE issueCertificate failed but pause_on_error is requested ",
                 PRIORITY => 'warn',
                 FACILITY => [ 'application' ]
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("NICE issueCertificate failed but pause_on_error is requested ");
+            #LOGMIGRATE 
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Original error: " . $ee,
                 PRIORITY => 'error',
                 FACILITY => [ 'application' ]
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->error("Original error: " . $ee);
+            #LOGMIGRATE 
             $self->pause('I18N_OPENXPKI_UI_PAUSED_CERTSIGN_TOKEN_SIGNING_FAILED');
         }
 

@@ -60,11 +60,15 @@ sub execute
     );
     $context->param('crr_serial' => $crr_serial);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "crr for $identifier persisted",
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("crr for $identifier persisted");
+    #LOGMIGRATE 
 }
 
 1;

@@ -42,11 +42,15 @@ sub execute
 
     # TODO - add SANs
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "generated pkcs#10 request for $subject",
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("generated pkcs#10 request for $subject");
+    #LOGMIGRATE 
 
     $context->param($target_key => $pkcs10);
 

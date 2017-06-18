@@ -179,11 +179,15 @@ sub __send_cert : PRIVATE {
     }
 
     if ($cert_count == 0) {
+=cut LOGMIGRATE
          CTX('log')->log(
             MESSAGE => "SCEP getcert - no certificate found for serial $requested_serial_hex",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+         CTX('log')->application()->info("SCEP getcert - no certificate found for serial $requested_serial_hex");
+         #LOGMIGRATE 
 
         return $token->command(
             {   COMMAND      => 'create_error_reply',
@@ -251,11 +255,15 @@ sub __send_crl : PRIVATE {
     });
 
     if (!$res || scalar @{$res} != 1) {
+=cut LOGMIGRATE
           CTX('log')->log(
             MESSAGE => "SCEP getcrl - no issuer found for serial $issuer_serial and issuer " . $requested_issuer_serial->{ISSUER},
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+          CTX('log')->application()->error("SCEP getcrl - no issuer found for serial $issuer_serial and issuer " . $requested_issuer_serial->{ISSUER});
+          #LOGMIGRATE 
 
         return $token->command(
             {   COMMAND      => 'create_error_reply',
@@ -412,11 +420,15 @@ sub __pkcs_req : PRIVATE {
 
 
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP try to start new workflow for $transaction_id",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP try to start new workflow for $transaction_id");
+        #LOGMIGRATE 
 
         # inject newlines if not already present
         # this is necessary for openssl / openca-scep to parse
@@ -612,11 +624,15 @@ sub __pkcs_req : PRIVATE {
             }
         );
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Delivered certificate via SCEP ($cert_identifier)",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("Delivered certificate via SCEP ($cert_identifier)");
+        #LOGMIGRATE 
 
         return [ '', $certificate_msg ];
     }
@@ -626,18 +642,26 @@ sub __pkcs_req : PRIVATE {
     my $scep_error_code = $wf_info->{WORKFLOW}->{CONTEXT}->{'scep_error'};
 
     if ( !defined $scep_error_code || ($scep_error_code !~ m{ badAlg | badMessageCheck | badTime | badCertId }xms)) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP Request failed without error code set - default to badRequest",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("SCEP Request failed without error code set - default to badRequest");
+        #LOGMIGRATE 
         $scep_error_code = 'badRequest';
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP Request failed with error $scep_error_code",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("SCEP Request failed with error $scep_error_code");
+        #LOGMIGRATE 
     }
     my $error_msg = $token->command(
         {   COMMAND      => 'create_error_reply',

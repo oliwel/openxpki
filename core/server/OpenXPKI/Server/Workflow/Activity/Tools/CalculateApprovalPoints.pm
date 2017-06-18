@@ -34,11 +34,15 @@ sub execute {
         } elsif(ref $context->param('approvals') eq 'ARRAY') {
             $approvals = scalar ( @{$context->param('approvals')} );
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => 'No approvals or value in invalid format!',
                 PRIORITY => 'debug',
                 FACILITY => 'application'
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug('No approvals or value in invalid format!');
+            #LOGMIGRATE 
         }
     }
 

@@ -44,11 +44,15 @@ sub execute {
         }
         $params->{ VALUE } = $context->param( $dp_value_param );
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'Old parameter format found in set datapool activity',
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug('Old parameter format found in set datapool activity');
+        #LOGMIGRATE 
 
     } else {
         $params->{ KEY } = $self->param( 'key' );
@@ -91,11 +95,15 @@ sub execute {
 	    $context->param( $valparam => undef );
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Set datapool entry for key '.$params->{KEY}.' in namespace '.$params->{NAMESPACE},
         PRIORITY => 'info',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Set datapool entry for key '.$params->{KEY}.' in namespace '.$params->{NAMESPACE});
+    #LOGMIGRATE 
 
     # TODO: handle return code from set_data_pool_entry()
 

@@ -1775,11 +1775,15 @@ sub AUTOMETHOD {
             }
         }
 
+=cut LOGMIGRATE
         CTX('log')->log(
         MESSAGE  => "Method '$method_name' called via API",
         PRIORITY => 'debug',
         FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->debug("Method '$method_name' called via API");
+        #LOGMIGRATE 
 
         my $memoization_key;
         if (exists $method_info_of{$ident}->{$method_name}->{memoize} &&

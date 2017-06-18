@@ -116,11 +116,15 @@ sub notify {
 	##! 32: 'Template vars: ' . Dumper $template_vars
 
 	if ( !@handles ) {
+=cut LOGMIGRATE
 		CTX('log')->log(
 			MESSAGE  => "No notifcations to send for $msgconfig",
 			PRIORITY => "debug",
 			FACILITY => "system",
 		);
+=cut LOGMIGRATE
+		CTX('log')->system()->debug("No notifcations to send for $msgconfig");
+		#LOGMIGRATE 
 		return 0;
 	}
 
@@ -209,6 +213,7 @@ sub notify {
 		$token->{$handle} = $pi;
 
 		if ($EVAL_ERROR) {
+=cut LOGMIGRATE
 			CTX('log')->log(
 				MESSAGE => 'ServiceNow action failed on ticket '
 				  . $pi->{sys_id}
@@ -217,6 +222,12 @@ sub notify {
 				PRIORITY => 'error',
 				FACILITY => 'system',
 			);
+=cut LOGMIGRATE
+			CTX('log')->system()->error('ServiceNow action failed on ticket '
+				  . $pi->{sys_id}
+				  . ' with '
+				  . $EVAL_ERROR);
+			#LOGMIGRATE 
 			
 			push @failed, $handle;
 		}
@@ -308,11 +319,15 @@ sub _insert {
 
     ##! 8: "Created a new ticket, ID " . $ticket->{ticket_id}
     	
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => 'Opening new ServiceNow ticket - id ' . $ticket->{ticket_id},
         PRIORITY => 'info',
         FACILITY => 'system'
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->info('Opening new ServiceNow ticket - id ' . $ticket->{ticket_id});
+    #LOGMIGRATE 
     
     ##! 1: 'end'
     return $ticket;
@@ -339,11 +354,15 @@ sub _update {
      
     ##! 8: "Ticket updated " . $cfg->{sys_id}
         
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "ServiceNow Ticket updated " . $cfg->{sys_id},
         PRIORITY => 'info',
         FACILITY => 'system'
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->info("ServiceNow Ticket updated " . $cfg->{sys_id});
+    #LOGMIGRATE 
     
     ##! 1: 'end'
     return $result;

@@ -487,21 +487,29 @@ sub execute_workflow_activity {
     ##! 64: Dumper $workflow
     if ($fork_mode) {
         $self->__execute_workflow_activity( $workflow, $wf_activity, 1);
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Background execution of workflow activity '$wf_activity' on workflow id $wf_id (type '$wf_type')",
             PRIORITY => 'debug',
             FACILITY => 'workflow',
         );
+=cut LOGMIGRATE
+        CTX('log')->workflow()->debug("Background execution of workflow activity '$wf_activity' on workflow id $wf_id (type '$wf_type')");
+        #LOGMIGRATE 
         if ($fork_mode eq 'watch') {
             $workflow = $self->__watch_workflow( $workflow );
         }
     } else {
         $self->__execute_workflow_activity( $workflow, $wf_activity );
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Executed workflow activity '$wf_activity' on workflow id $wf_id (type '$wf_type')",
             PRIORITY => 'debug',
             FACILITY => 'workflow',
         );
+=cut LOGMIGRATE
+        CTX('log')->workflow()->debug("Executed workflow activity '$wf_activity' on workflow id $wf_id (type '$wf_type')");
+        #LOGMIGRATE 
     }
 
     return $self->__get_workflow_ui_info({ WORKFLOW => $workflow }) if $wf_uiinfo;
@@ -529,11 +537,15 @@ sub fail_workflow {
 
     $workflow->set_failed( $error, $reason );
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Failed workflow $wf_id (type '$wf_type') with error $error",
         PRIORITY => 'info',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("Failed workflow $wf_id (type '$wf_type') with error $error");
+    #LOGMIGRATE 
 
     return $self->__get_workflow_ui_info({ WORKFLOW => $workflow });
 
@@ -644,11 +656,15 @@ sub __wakeup_resume_workflow {
         $mode .= "($fork_mode)";
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "$mode workflow $wf_id (type '$wf_type') with activity $wf_activity",
         PRIORITY => 'info',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("$mode workflow $wf_id (type '$wf_type') with activity $wf_activity");
+    #LOGMIGRATE 
     ##! 16: 'execute activity ' . $wf_activity
 
     if ($fork_mode) {
@@ -743,11 +759,15 @@ sub create_workflow_instance {
     });
 
     ##! 16: 'workflow id ' .  $wf_id
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Workflow instance $wf_id created for $creator (type: '$wf_type')",
         PRIORITY => 'info',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("Workflow instance $wf_id created for $creator (type: '$wf_type')");
+    #LOGMIGRATE 
 
 
     # load the first state and check for the initial action

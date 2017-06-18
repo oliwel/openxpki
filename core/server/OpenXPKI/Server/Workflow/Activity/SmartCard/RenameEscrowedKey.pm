@@ -44,11 +44,15 @@ sub execute {
     ##! 16: 'modify_data_pool_entry params: ' . Dumper $params
     CTX('api')->modify_data_pool_entry($params);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "SmartCard escrow key renamed for csr_serial " . $context->param('csr_serial'),
         PRIORITY => 'info',
         FACILITY => 'application'
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("SmartCard escrow key renamed for csr_serial " . $context->param('csr_serial'));
+    #LOGMIGRATE 
 
     return 1;
 }

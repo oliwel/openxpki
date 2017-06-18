@@ -138,11 +138,15 @@ sub generate_key {
         $command->{PARAM} = $params->{DSAPARAM};
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Creating private $key_alg key with params " . Dumper $command->{PKEYOPT},
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Creating private $key_alg key with params " . Dumper $command->{PKEYOPT});
+    #LOGMIGRATE 
 
     ##! 16: 'command: ' . Dumper $command
 
@@ -929,11 +933,15 @@ sub import_crl {
 
     $dbi->insert( into => 'crl', values => $data );
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Imported CRL for issuer $issuer_dn",
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("Imported CRL for issuer $issuer_dn");
+    #LOGMIGRATE 
 
     delete $data->{data};
     return $data;
@@ -1411,11 +1419,15 @@ sub get_private_key_for_cert {
         );
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Private key requested for certificate $identifier",
         PRIORITY => 'info',
         FACILITY => 'audit',
     );
+=cut LOGMIGRATE
+    CTX('log')->audit()->info("Private key requested for certificate $identifier");
+    #LOGMIGRATE 
 
     return { PRIVATE_KEY => $result, };
 }
@@ -1672,12 +1684,16 @@ sub get_data_pool_entry {
     # chain we assume it's ok.
     $self->__assert_current_pki_realm_within_workflow($requested_pki_realm);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE =>
           "Reading data pool entry [$requested_pki_realm:$namespace:$key]",
         PRIORITY => 'debug',
         FACILITY => 'system',
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->debug("Reading data pool entry [$requested_pki_realm:$namespace:$key]");
+    #LOGMIGRATE 
 
     my $where = {
         pki_realm    => $requested_pki_realm,
@@ -1693,11 +1709,15 @@ sub get_data_pool_entry {
 
     # no entry found, do not raise exception but simply return undef
     unless ($result) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Requested data pool entry [$requested_pki_realm:$namespace:$key] not available",
             PRIORITY => 'debug',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->debug("Requested data pool entry [$requested_pki_realm:$namespace:$key] not available");
+        #LOGMIGRATE 
         return;
     }
 
@@ -2281,11 +2301,15 @@ sub control_watchdog {
             );
         }
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Watchdog termination requested via API",
             PRIORITY => 'info',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->info("Watchdog termination requested via API");
+        #LOGMIGRATE 
 
         CTX('watchdog')->terminate();
 

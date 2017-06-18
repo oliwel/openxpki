@@ -35,11 +35,15 @@ sub _evaluate
     # if nothing is set, check if we have algorithms for server side
     if (!defined $config_mode) {
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "KeyGenerationMode condition fall back to autodetect",
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("KeyGenerationMode condition fall back to autodetect");
+        #LOGMIGRATE 
 
         if ($config->exists( [ 'profile', $profile, 'key', 'alg' ] ) ||
         $config->exists( [ 'profile', 'default', 'key', 'alg' ] )) {
@@ -61,11 +65,15 @@ sub _evaluate
         configuration_error("unknown option passed for mode ($mode)");
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "KeyGenerationMode condition result: $result ($mode ?= $config_mode)",
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("KeyGenerationMode condition result: $result ($mode ?= $config_mode)");
+    #LOGMIGRATE 
 
     if (!$result) {
         condition_error("Requested mode $mode is not allowed ($config_mode)");

@@ -121,11 +121,15 @@ sub execute {
 		unlink $source_file;
 	} 
 	    
+=cut LOGMIGRATE
     CTX('log')->log(
 		MESSAGE => 'Transfer of file successful' ,
 		PRIORITY => 'info',
 		FACILITY => 'application',
 	);
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Transfer of file successful' );
+    #LOGMIGRATE 
     
     return 1;
     

@@ -118,11 +118,15 @@ sub new
 
 
     unlink ($self->{PARAMS}->{socketfile});
+=cut LOGMIGRATE
     CTX('log')->log(
 	    MESSAGE  => "Server initialization completed",
 	    PRIORITY => "info",
 	    FACILITY => "system",
 	);
+=cut LOGMIGRATE
+    CTX('log')->system()->info("Server initialization completed");
+    #LOGMIGRATE 
 
     $self->{PARAMS}->{no_client_stdout} = 1;
 
@@ -220,6 +224,7 @@ sub post_bind_hook {
 
     if (($socket_owner != -1) || ($socket_group != -1)) {
         # try to change socket ownership
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Setting socket file '$socketfile' ownership to "
             . (( $socket_owner != -1) ? $socket_owner : 'unchanged' )
@@ -228,6 +233,12 @@ sub post_bind_hook {
             PRIORITY => "debug",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->debug("Setting socket file '$socketfile' ownership to "
+            . (( $socket_owner != -1) ? $socket_owner : 'unchanged' )
+            . '/'
+            . (( $socket_group != -1) ? $socket_group : 'unchanged' ));
+        #LOGMIGRATE 
 
         if (! chown $socket_owner, $socket_group, $socketfile) {
             OpenXPKI::Exception->throw (
@@ -289,12 +300,17 @@ sub pre_loop_hook {
                 2,
                 "Setting gid to \"$self->{PARAMS}->{process_group}\""
             );
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Setting gid to to "
                             . $self->{PARAMS}->{process_group},
                 PRIORITY => "debug",
                 FACILITY => "system",
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->debug("Setting gid to to "
+                            . $self->{PARAMS}->{process_group});
+            #LOGMIGRATE 
             set_gid( $self->{PARAMS}->{process_group} );
         }
         if( $self->{PARAMS}->{process_owner} ne $> ){
@@ -302,22 +318,31 @@ sub pre_loop_hook {
                 2,
                 "Setting uid to \"$self->{PARAMS}->{process_owner}\""
             );
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Setting uid to to "
                     . $self->{PARAMS}->{process_owner},
                 PRIORITY => "debug",
                 FACILITY => "system",
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->debug("Setting uid to to "
+                    . $self->{PARAMS}->{process_owner});
+            #LOGMIGRATE 
             set_uid( $self->{PARAMS}->{process_owner} );
         }
     };
     if( $EVAL_ERROR ){
         if ( $> == 0 ) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => $EVAL_ERROR,
                 PRIORITY => "fatal",
                 FACILITY => "system",
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->fatal($EVAL_ERROR);
+            #LOGMIGRATE 
         die $EVAL_ERROR;
         } elsif( $< == 0) {
             CTX('log')->log(
@@ -326,11 +351,15 @@ sub pre_loop_hook {
                 FACILITY => "system",
             );
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => $EVAL_ERROR,
                 PRIORITY => "error",
                 FACILITY => "system",
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->error($EVAL_ERROR);
+            #LOGMIGRATE 
         }
     }
     if ($self->{TYPE} eq 'Simple') {
@@ -424,11 +453,15 @@ sub process_request {
     }
 
     if (defined $msg) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Uncaught exception: " . $msg,
             PRIORITY => "fatal",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->fatal("Uncaught exception: " . $msg);
+        #LOGMIGRATE 
         # die gracefully
         ##! 1: "Uncaught exception: " . Dumper $msg
         $ERRNO = 1;
@@ -903,11 +936,15 @@ sub __log_and_die {
     }
     ##! 16: 'log_message: ' . $log_message
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => $log_message,
         PRIORITY => "fatal",
         FACILITY => "system",
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->fatal($log_message);
+    #LOGMIGRATE 
 
     # Check if watchdog was already started and kill
     if (OpenXPKI::Server::Context::hascontext('watchdog')) {

@@ -75,11 +75,15 @@ sub execute {
         
         # can happen for external CAs or if new tokens did not create a crl yet
         if (!$crl && $self->param('empty_ok')) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "CRL publication skipped for $ca_identifier - no crl found",
                 PRIORITY => 'info',
                 FACILITY => [ 'system' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->info("CRL publication skipped for $ca_identifier - no crl found");
+            #LOGMIGRATE 
             return;
         }
 
@@ -178,11 +182,15 @@ sub execute {
                     FACILITY => [ 'application' ],
                 );
             } elsif ($on_error eq 'skip') {
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "CRL pubication failed for target $target and skip is set",
                     PRIORITY => 'warn',
                     FACILITY => [ 'application' ],
                 );
+=cut LOGMIGRATE
+                CTX('log')->application()->warn("CRL pubication failed for target $target and skip is set");
+                #LOGMIGRATE 
             } else {
                 OpenXPKI::Exception->throw(
                     message => 'I18N_OPENXPKI_SERVER_WORKFLOW_ACTIVITY_PUBLICATION_FAILED',
@@ -193,11 +201,15 @@ sub execute {
                 );
             }
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "CRL pubication to $target for $crl_serial done",
                 PRIORITY => 'debug',
                 FACILITY => [ 'application' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("CRL pubication to $target for $crl_serial done");
+            #LOGMIGRATE 
         }
     }
   
@@ -217,11 +229,15 @@ sub execute {
             where => { crl_key => $crl_serial }
         );
         
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "CRL pubication date set for crl $crl_serial",
             PRIORITY => 'info',
             FACILITY => [ 'system' ],
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->info("CRL pubication date set for crl $crl_serial");
+        #LOGMIGRATE 
     }
 
     ##! 4: 'end'

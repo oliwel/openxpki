@@ -54,11 +54,15 @@ sub evaluate {
             );
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Subject mismatch $subject != $parsed_subject",
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Subject mismatch $subject != $parsed_subject");
+    #LOGMIGRATE 
 
     condition_error( "I18N_OPENXPKI_SERVER_WORKFLOW_VALIDATOR_SUBJECT_MISMATCH_PKCS10" )
         if ( $subject != $parsed_subject );

@@ -42,11 +42,15 @@ sub execute {
 
     if (not $next_ca) {
         ##! 16: 'No cert found'
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP GetNextCACert nothing found (realm $pki_realm).",
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("SCEP GetNextCACert nothing found (realm $pki_realm).");
+        #LOGMIGRATE 
 
         # Send a 404 header with a verbose explanation
         return $self->command_response(

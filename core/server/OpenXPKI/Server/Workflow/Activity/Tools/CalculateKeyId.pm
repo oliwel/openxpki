@@ -61,11 +61,15 @@ sub execute {
     $modulus =~ s/^(?:00)+//g;
     my $key_id = sha1_hex(pack('H*', $modulus));
     
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'calculated key id is ' . $key_id,
         PRIORITY => 'debug',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug('calculated key id is ' . $key_id);
+    #LOGMIGRATE 
     
     ##! 16: 'pkcs11 plugin keyid hash: ' . $key_id
     

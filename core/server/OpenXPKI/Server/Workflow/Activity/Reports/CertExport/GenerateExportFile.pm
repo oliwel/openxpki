@@ -48,11 +48,15 @@ sub execute {
 
     # Nothing to do
     if (! scalar @{$dp_cert_to_export}) {   
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'Certificate export - nothing to do',
             PRIORITY => 'info',
             FACILITY => 'application',
-        );               
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->info('Certificate export - nothing to do');
+        #LOGMIGRATE                
         return 1;
     }
            

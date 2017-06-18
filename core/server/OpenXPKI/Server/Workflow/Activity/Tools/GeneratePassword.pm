@@ -79,11 +79,15 @@ sub execute {
     # truncate password to maximum length
     $password = substr( $password, 0, $password_length );
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Generated random password with length ' . $password_length,  
         PRIORITY => 'debug',
         FACILITY => [ 'application' ],
-    );  
+    );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug('Generated random password with length ' . $password_length);
+    #LOGMIGRATE   
 
     # pass on the password
     $context->param( '_password' => $password );

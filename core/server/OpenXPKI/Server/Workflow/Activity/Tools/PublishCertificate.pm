@@ -42,11 +42,15 @@ sub execute {
     my $prefix = $self->param('prefix');
     if (defined $prefix) {
         if (!$prefix || !$config->exists( $prefix )) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => 'Publication in prefix mode but prefix not set or empty',
                 PRIORITY => 'debug',
                 FACILITY => [ 'application' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug('Publication in prefix mode but prefix not set or empty');
+            #LOGMIGRATE 
             return 1;
         }
 
@@ -140,11 +144,15 @@ sub execute {
 
     # Defined but empty, stop publication
     if (defined($publish_key) && !$publish_key) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'Dont publish as publish_key is defined but empty for ' .$data->{subject},
             PRIORITY => 'info',
             FACILITY => [ 'application' ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info('Dont publish as publish_key is defined but empty for ' .$data->{subject});
+        #LOGMIGRATE 
         return 1;
     }
 
@@ -170,11 +178,15 @@ sub execute {
 
     ##! 32: 'Data for publication '. Dumper ( $data )
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Start publication to '.$publish_key.' for ' .$data->{subject},
         PRIORITY => 'info',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Start publication to '.$publish_key.' for ' .$data->{subject});
+    #LOGMIGRATE 
 
     # Required for special connectors (grabbing extended data from the workflow)
     # TODO: should be replaced by e.g. a static factory
@@ -208,11 +220,15 @@ sub execute {
                     FACILITY => [ 'application' ],
                 );
             } elsif ($on_error eq 'skip') {
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "Entity pubication failed for target $target and skip is set",
                     PRIORITY => 'warn',
                     FACILITY => [ 'application' ],
                 );
+=cut LOGMIGRATE
+                CTX('log')->application()->warn("Entity pubication failed for target $target and skip is set");
+                #LOGMIGRATE 
             } else {
                 OpenXPKI::Exception->throw(
                     message => 'I18N_OPENXPKI_SERVER_WORKFLOW_ACTIVITY_PUBLICATION_FAILED',
@@ -223,11 +239,15 @@ sub execute {
                 );
             }
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "Entity pubication to $target for ". $publish_key." done",
                 PRIORITY => 'debug',
                 FACILITY => [ 'application' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("Entity pubication to $target for ". $publish_key." done");
+            #LOGMIGRATE 
         }
     }
 

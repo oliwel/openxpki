@@ -43,11 +43,15 @@ sub execute
         },
     );
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "mark certificate $identifier as revoked in database",
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("mark certificate $identifier as revoked in database");
+    #LOGMIGRATE 
 }
 
 1;

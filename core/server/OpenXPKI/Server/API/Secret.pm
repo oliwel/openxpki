@@ -54,17 +54,25 @@ sub set_secret_part
 	    });
 
     if ($result) {
+=cut LOGMIGRATE
 	CTX('log')->log(
 	    MESSAGE  => "Secret part $args->{PART} set for group $args->{SECRET}",
 	    PRIORITY => 'info',
 	    FACILITY => 'audit',
 	    );
+=cut LOGMIGRATE
+	CTX('log')->audit()->info("Secret part $args->{PART} set for group $args->{SECRET}");
+	#LOGMIGRATE 
     } else {
+=cut LOGMIGRATE
 	CTX('log')->log(
 	    MESSAGE  => "Incorrect secret part $args->{PART} entered for group $args->{SECRET}",
 	    PRIORITY => 'warn',
 	    FACILITY => 'audit',
 	    );
+=cut LOGMIGRATE
+	CTX('log')->audit()->warn("Incorrect secret part $args->{PART} entered for group $args->{SECRET}");
+	#LOGMIGRATE 
     }
     
     return $result;
@@ -76,11 +84,15 @@ sub clear_secret
     my $self = shift;
     my $args = shift;
 
+=cut LOGMIGRATE
     CTX('log')->log(
 	MESSAGE  => "Clearing secret for group $args->{SECRET}",
 	PRIORITY => 'info',
 	FACILITY => 'audit',
 	);
+=cut LOGMIGRATE
+    CTX('log')->audit()->info("Clearing secret for group $args->{SECRET}");
+    #LOGMIGRATE 
 
     return CTX('crypto_layer')->clear_secret_group($args->{SECRET});
 }

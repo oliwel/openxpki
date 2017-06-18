@@ -283,11 +283,15 @@ sub execute {
         $context->param('error_code','I18N_OPENXPKI_UI_CLIENT_GETAUTHCODE_USER_NOT_AUTH_PERS');
 
         ##! 1: "Failed to set salt/hash for user $user - not in auth1,2"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'I18N_OPENXPKI_SERVER_WORKFLOW_ACTIVITY_SMARTCARD_GENACTCODE_USER_NOT_AUTH_PERS',
             PRIORITY => 'warn',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn('I18N_OPENXPKI_SERVER_WORKFLOW_ACTIVITY_SMARTCARD_GENACTCODE_USER_NOT_AUTH_PERS');
+        #LOGMIGRATE 
         return $self;
     }
 }

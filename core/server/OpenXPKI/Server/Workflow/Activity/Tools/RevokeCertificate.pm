@@ -85,11 +85,15 @@ sub execute {
     }
 
     ##! 32: 'Prepare revocation with params: ' . Dumper $param
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Prepare revocation with params: ' . Dumper $param, 
         PRIORITY => 'debug',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug('Prepare revocation with params: ' . Dumper $param);
+    #LOGMIGRATE 
 
     # Parse invalidity_time if set - workflow requires epoch
     if ($param->{invalidity_time}) {
@@ -109,21 +113,29 @@ sub execute {
         })->epoch();
 
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'Delayed revoke requested', 
             PRIORITY => 'info',
             FACILITY => [ 'application' ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info('Delayed revoke requested');
+        #LOGMIGRATE 
       
         # Remove delayed revocation if the requested date is in the past
         # or near future as its useless and the validator wont accept it!
         if ($param->{delay_revocation_time} < (time() + 15)) {
             $param->{delay_revocation_time} = 0;
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => 'Delayed revoke with timestamp in the past - removing it', 
                 PRIORITY => 'warn',
                 FACILITY => [ 'application' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn('Delayed revoke with timestamp in the past - removing it');
+            #LOGMIGRATE 
         }
     }
 
@@ -138,11 +150,15 @@ sub execute {
     # put together the log statement
     my $msg = join (",", map {  $_ . ' => ' . $param->{$_} } keys(%{$param}));
 
+=cut LOGMIGRATE
     CTX('log')->log(
 	    MESSAGE => 'Revocation workflow #'. $wf_info->{WORKFLOW}->{ID}.' '. $msg,
 	    PRIORITY => 'info',
 	    FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Revocation workflow #'. $wf_info->{WORKFLOW}->{ID}.' '. $msg);
+    #LOGMIGRATE 
 
     if ($self->param('target_key')) {
         $context->param( $self->param('target_key') => $wf_info->{WORKFLOW}->{ID} );

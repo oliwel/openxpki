@@ -30,21 +30,29 @@ sub evaluate {
     
     if (!defined $res) {
         ##! 16: 'owner is not defined'
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "IsCertificateOwner condition failed - no owner found",
             PRIORITY => 'warn',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn("IsCertificateOwner condition failed - no owner found");
+        #LOGMIGRATE 
         condition_error('I18N_OPENXPKI_UI_USER_IS_CERTIFICATE_OWNER_NO_OWNER_FOUND');       
     } 
     
     if (!$res) {
         ##! 16: 'owner does not match'
+=cut LOGMIGRATE
         CTX('log')->log(        
             MESSAGE  => "IsCertificateOwner condition failed - owner not matches",
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("IsCertificateOwner condition failed - owner not matches");
+        #LOGMIGRATE 
         condition_error('I18N_OPENXPKI_UI_USER_IS_CERTIFICATE_OWNER_FAILED');
     }
 

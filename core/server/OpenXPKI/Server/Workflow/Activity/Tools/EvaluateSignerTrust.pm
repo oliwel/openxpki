@@ -112,11 +112,15 @@ sub execute {
         );
 
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Trusted Signer chain validation FAILED",
             PRIORITY => 'info',
             FACILITY => ['application']
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("Trusted Signer chain validation FAILED");
+        #LOGMIGRATE 
     }
 
     # End chain validation, now check the authorization
@@ -130,11 +134,15 @@ sub execute {
     my $matched = 0;
     my $current_realm = CTX('session')->get_pki_realm();
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Trusted Signer Authorization $signer_profile / $signer_realm / $signer_subject / $signer_identifier",
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Trusted Signer Authorization $signer_profile / $signer_realm / $signer_subject / $signer_identifier");
+    #LOGMIGRATE 
 
     TRUST_RULE:
     foreach my $rule (@rules) {
@@ -159,30 +167,42 @@ sub execute {
                 $matched = ($signer_profile eq $match);
 
             } else {
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "Trusted Signer Authorization unknown ruleset $key:$match",
                     PRIORITY => 'error',
                     FACILITY => 'system',
                 );
+=cut LOGMIGRATE
+                CTX('log')->system()->error("Trusted Signer Authorization unknown ruleset $key:$match");
+                #LOGMIGRATE 
                 $matched = 0;
             }
             next TRUST_RULE if (!$matched);
 
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "Trusted Signer Authorization matched subrule $rule/$match",
                 PRIORITY => 'debug',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("Trusted Signer Authorization matched subrule $rule/$match");
+            #LOGMIGRATE 
             ##! 32: 'Matched ' . $match
         }
 
         if ($matched) {
             ##! 16: 'Passed validation rule #'.$rule,
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "Trusted Signer Authorization matched rule $rule",
                 PRIORITY => 'info',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->info("Trusted Signer Authorization matched rule $rule");
+            #LOGMIGRATE 
             $context->param('signer_authorized' => 1);
             return 1;
         }

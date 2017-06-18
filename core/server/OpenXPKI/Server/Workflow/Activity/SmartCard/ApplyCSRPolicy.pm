@@ -34,11 +34,15 @@ sub execute {
     my $cert_profile = shift @cert_profiles; 
     my $cert_role = $config->get( "smartcard.policy.certs.type.$cert_type.role" ) || 'User';
     ##! 8: ' Prepare CSR for profile '. $cert_profile .' with role '. $cert_role
+=cut LOGMIGRATE
     CTX('log')->log(
 	    MESSAGE => "Preparing CSR for profile '$cert_profile' with role '$cert_role'",
 	    PRIORITY => 'info',
 	    FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("Preparing CSR for profile '$cert_profile' with role '$cert_role'");
+    #LOGMIGRATE 
 
     # cert_issuance_data is an array of hashes, one entry per certificate
 
@@ -49,11 +53,15 @@ sub execute {
     # If max_validity is not in context, check if the current cert_type has the lead_validity flag set
     my $max_validity = $context->param('max_validity');
     if (!$max_validity && $config->get("smartcard.policy.certs.type.$cert_type.lead_validity")) {
+=cut LOGMIGRATE
 	   CTX('log')->log(
             MESSAGE => "Certificate of type '$cert_type' is a lead certificate",
 			PRIORITY => 'info',
 			FACILITY => [ 'application' ],
 		);
+=cut LOGMIGRATE
+	   CTX('log')->application()->info("Certificate of type '$cert_type' is a lead certificate");
+	   #LOGMIGRATE 
 
         # Check for testing override
         my $validity = $config->get("smartcard.testing.max_validity");
@@ -69,11 +77,15 @@ sub execute {
             if (!$validity) {
                 $validity = $config->get("profile.default.validity.notafter");    
             }
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "Certificate validity configured for profile '$cert_profile': $validity",
                 PRIORITY => 'info',
                 FACILITY => [ 'application', ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->info("Certificate validity configured for profile '$cert_profile': $validity");
+            #LOGMIGRATE 
         }
 
         my $notafter = OpenXPKI::DateTime::convert_date({
@@ -84,11 +96,15 @@ sub execute {
             })
         });
         ##! 32: ' Set notafter date due to lead_validity flag to ' .$notafter
+=cut LOGMIGRATE
         CTX('log')->log(
 			MESSAGE => "Force notafter date to $notafter",
 			PRIORITY => 'info',
 			FACILITY => [ 'application' ],
 		);
+=cut LOGMIGRATE
+        CTX('log')->application()->info("Force notafter date to $notafter");
+        #LOGMIGRATE 
         $context->param('notafter' => $notafter);
         $context->param('max_validity' => $notafter);
     }
@@ -124,11 +140,15 @@ sub execute {
         ##! 8: ' Certificate needs '. $max_login . ' Login/UPNs. Found: '  . scalar @{$allowed_logins}
         ##! 16: ' Allowed Logins found ' .  join("\n", @{$allowed_logins})
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => ' Certificate needs '. $max_login . ' Login/UPNs. Found: '  . scalar @{$allowed_logins},
             PRIORITY => 'debug',
             FACILITY => [ 'application' ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug(' Certificate needs '. $max_login . ' Login/UPNs. Found: '  . scalar @{$allowed_logins});
+        #LOGMIGRATE 
 
         # Check if frontend passed a selection
         if ($context->param( 'login_ids' )) {

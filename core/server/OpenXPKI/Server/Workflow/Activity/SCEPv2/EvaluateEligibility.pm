@@ -78,11 +78,15 @@ sub execute {
                     $plain_result = $config->get( [ @prefix, 'value', @path ] );
                 };
                 if ($EVAL_ERROR) {
+=cut LOGMIGRATE
                     CTX('log')->log(
                         MESSAGE => "SCEP eligibility check chrashed - do pause",
                         PRIORITY => 'warn',
                         FACILITY => 'application',
                     );
+=cut LOGMIGRATE
+                    CTX('log')->application()->warn("SCEP eligibility check chrashed - do pause");
+                    #LOGMIGRATE 
                     ##! 32: 'Doing pause'
                     $self->pause('I18N_OPENXPKI_UI_ELIGIBILITY_CHECK_UNEXPECTED_ERROR');
                 }
@@ -113,11 +117,15 @@ sub execute {
                     }
                 }
                 
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "SCEP eligibility check for expected value " . ($res ? 'succeeded' : 'failed'),
                     PRIORITY => 'debug',
                     FACILITY => 'application',
                 );
+=cut LOGMIGRATE
+                CTX('log')->application()->debug("SCEP eligibility check for expected value " . ($res ? 'succeeded' : 'failed'));
+                #LOGMIGRATE 
                 
             } else {                
                 # Evaluate whatever comes back to a boolean 0/1 f                
@@ -132,11 +140,15 @@ sub execute {
         # check the ref and explicit return to make sure it was not a stupid config
         $res = (ref $plain_result eq '' && $plain_result eq '1');
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP eligibility check without path - result " . $plain_result,
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("SCEP eligibility check without path - result " . $plain_result);
+        #LOGMIGRATE 
 
     }
 

@@ -43,11 +43,15 @@ sub execute
 		
         $hash->{$key} = $value;
          
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Setting $key to $value in context hash ",
             PRIORITY => 'debug',
             FACILITY => [ 'application', ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Setting $key to $value in context hash ");
+        #LOGMIGRATE 
     }
     
     ##! 32: 'hash ' . Dumper $hash

@@ -77,11 +77,15 @@ sub execute {
                     $plain_result = $config->get( [ @prefix, 'value', @path ] );
                 };
                 if ($EVAL_ERROR) {
+=cut LOGMIGRATE
                     CTX('log')->log(
                         MESSAGE => "Eligibility check chrashed - do pause",
                         PRIORITY => 'warn',
                         FACILITY => 'application',
                     );
+=cut LOGMIGRATE
+                    CTX('log')->application()->warn("Eligibility check chrashed - do pause");
+                    #LOGMIGRATE 
                     ##! 32: 'Doing pause'
                     $self->pause('I18N_OPENXPKI_UI_ELIGIBILITY_CHECK_UNEXPECTED_ERROR');
                 }
@@ -120,11 +124,15 @@ sub execute {
                     }
                 }
                 
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "Eligibility check for expected value " . ($res ? 'succeeded' : 'failed'),
                     PRIORITY => 'debug',
                     FACILITY => 'application',
                 );
+=cut LOGMIGRATE
+                CTX('log')->application()->debug("Eligibility check for expected value " . ($res ? 'succeeded' : 'failed'));
+                #LOGMIGRATE 
             # Evaluate return value using regex
             } elsif ( $config->exists( [ @prefix, 'match' ] ) ) {
 
@@ -140,11 +148,15 @@ sub execute {
                 
                 $res = ($plain_result =~ $regex) ? 1 : 0;
         
+=cut LOGMIGRATE
 		        CTX('log')->log(
 		            MESSAGE => "Eligibility check using regex $regex " . ($res ? 'succeeded' : 'failed'),
 		            PRIORITY => 'debug',
 		            FACILITY => 'application',
 		        );
+=cut LOGMIGRATE
+		        CTX('log')->application()->debug("Eligibility check using regex $regex " . ($res ? 'succeeded' : 'failed'));
+		        #LOGMIGRATE 
                 
             } else {       
                 # Evaluate whatever comes back to a boolean 0/1 f                
@@ -159,11 +171,15 @@ sub execute {
         # check the ref and explicit return to make sure it was not a stupid config
         $res = (ref $plain_result eq '' && $plain_result eq '1');
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Eligibility check without path - result " . (defined $plain_result ? $plain_result : undef),
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Eligibility check without path - result " . (defined $plain_result ? $plain_result : undef));
+        #LOGMIGRATE 
 
     }
 

@@ -16,11 +16,15 @@ sub _validate {
     # allow non-defined PKCS10 for server-side key generation
     
     if (not defined $pkcs10) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "PKCS#10 validaton: is empty",
             PRIORITY => 'debug',
             FACILITY => 'application',
-        );   
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("PKCS#10 validaton: is empty");
+        #LOGMIGRATE    
         return 1;
     }
     
@@ -36,11 +40,15 @@ sub _validate {
         my $error = Crypt::PKCS10->error;
         $error =~ s/\s*$//;
         # Log the error
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Invalid PKCS#10 request ($error)",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Invalid PKCS#10 request ($error)");
+        #LOGMIGRATE 
         
         # If signature verification was on, check if it only the signature is the problem
         $decoded = Crypt::PKCS10->new($pkcs10,
@@ -55,11 +63,15 @@ sub _validate {
 
 
     if (!($decoded->subject() || $self->param('empty_subject'))) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'PKCS#10 has no subject',
             PRIORITY => "error",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error('PKCS#10 has no subject');
+        #LOGMIGRATE 
         validation_error('I18N_OPENXPKI_UI_VALIDATOR_PKCS10_NO_SUBJECT_ERROR');               
     }
 

@@ -63,11 +63,15 @@ sub evaluate {
    
    ##! 16: ' Key: ' . $key . ' - Value ' . Dumper ( $val )
    
+=cut LOGMIGRATE
    CTX('log')->log(
         MESSAGE => "Testing if WFHash ". $self->hash_name() ." key $key is " . $self->condition(),
         PRIORITY => 'debug',
         FACILITY => [ 'application' ]
     );
+=cut LOGMIGRATE
+   CTX('log')->application()->debug("Testing if WFHash ". $self->hash_name() ." key $key is " . $self->condition());
+   #LOGMIGRATE 
    
     if ($self->condition() eq 'key_defined') {       
        if (defined $val) {

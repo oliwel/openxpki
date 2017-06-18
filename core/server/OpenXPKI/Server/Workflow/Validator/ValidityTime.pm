@@ -20,11 +20,15 @@ sub validate {
         push @{$errors}, [ 'I18N_OPENXPKI_UI_ERROR_VALIDATOR_VALIDITY_TIME_INVALID_FORMAT',
                          {TIME => $time} ];
         $context->param ("__error" => $errors);
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Invalid validity time '$time'",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Invalid validity time '$time'");
+        #LOGMIGRATE 
         validation_error ($errors->[scalar @{$errors} -1]);
     }
     my ($year, $month, $day, $hour, $minute, $seconds)
@@ -38,11 +42,15 @@ sub validate {
         push @{$errors}, [ 'I18N_OPENXPKI_UI_ERROR_VALIDATOR_VALIDITY_TIME_INVALID_CONTENT',
                          {TIME => $time} ];
         $context->param ("__error" => $errors);
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Invalid validity time '$time'",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Invalid validity time '$time'");
+        #LOGMIGRATE 
         validation_error ($errors->[scalar @{$errors} -1]);
     }
 

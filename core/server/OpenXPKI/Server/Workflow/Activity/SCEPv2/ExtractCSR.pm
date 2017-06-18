@@ -48,11 +48,15 @@ sub execute {
     my $csr_subject = $csr_body->{'SUBJECT'};
     # Explicit check for empty subject - should never happen but if it crashes the logic
     if (!$csr_subject) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP csr has no subject",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("SCEP csr has no subject");
+        #LOGMIGRATE 
         OpenXPKI::Exception->throw(
             message => 'I18N_OPENXPKI_ACTIVITY_SCEP_EXTRACT_CSR_NO_SUBJECT'
         );
@@ -75,34 +79,50 @@ sub execute {
     $context->param('csr_key_type_ok' => 0 );
 
     if (!$key_size_allowed->{$csr_key_type}) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP csr key type not known ($csr_key_type)",
             PRIORITY => 'warn',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn("SCEP csr key type not known ($csr_key_type)");
+        #LOGMIGRATE 
     } else {
         $key_size_allowed->{$csr_key_type} =~ m{ (\d+)(\s*\-\s*(\d+))? }x;
         my $min = $1; my $max = $3 ? $3 : undef;
         $context->param('csr_key_type_ok' => 1 );
         if ($csr_key_size < $min) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "SCEP csr key size is too small ($csr_key_type / $csr_key_size < $min)",
                 PRIORITY => 'warn',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("SCEP csr key size is too small ($csr_key_type / $csr_key_size < $min)");
+            #LOGMIGRATE 
         } elsif($max && $csr_key_size > $max)  {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "SCEP csr key size is too long ($csr_key_type / $csr_key_size > $max)",
                 PRIORITY => 'warn',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("SCEP csr key size is too long ($csr_key_type / $csr_key_size > $max)");
+            #LOGMIGRATE 
         } else {
             $context->param('csr_key_size_ok' => 1 );
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "SCEP csr key size is ok ($csr_key_type / $csr_key_size)",
                 PRIORITY => 'warn',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("SCEP csr key size is ok ($csr_key_type / $csr_key_size)");
+            #LOGMIGRATE 
         }
     }
 
@@ -111,18 +131,26 @@ sub execute {
     my %hash_allowed = map { lc($_) => 1 } @hash_allowed;
     if ($hash_allowed{$csr_hash_type}) {
         $context->param('csr_hash_type_ok' => 1 );
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP csr hash type is ok ($csr_hash_type)",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP csr hash type is ok ($csr_hash_type)");
+        #LOGMIGRATE 
     } else {
         $context->param('csr_hash_type_ok' => 0 );
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP csr hash type not in allowed list ($csr_hash_type)",
             PRIORITY => 'warn',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn("SCEP csr hash type not in allowed list ($csr_hash_type)");
+        #LOGMIGRATE 
     }
 
 
@@ -149,11 +177,15 @@ sub execute {
         $context->param('cert_extension_name' => $cert_extension_name);
 
         if (!$cert_extension_name) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "SCEP found Microsoft Certificate Name Extension but was unable to parse it",
                 PRIORITY => 'error',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->error("SCEP found Microsoft Certificate Name Extension but was unable to parse it");
+            #LOGMIGRATE 
         } else {
             # Check if the extension has a profile mapping, defined in scep.<server>.profile_map
             my $profile = $config->get("scep.$server.profile_map.$cert_extension_name");
@@ -196,11 +228,15 @@ sub execute {
         my $profile = $context->param('cert_profile');
 
         $context->param('cert_subject_style' => $subject_style);
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP subject rendering enabled ( $profile / $subject_style ) ",
             PRIORITY => 'info',
             FACILITY => ['application'],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP subject rendering enabled ( $profile / $subject_style ) ");
+        #LOGMIGRATE 
 
         my %subject_vars = %hashed_dn;
 
@@ -225,11 +261,15 @@ sub execute {
         my @san_template_keys = $config->get_keys("profile.$profile.style.$subject_style.subject.san");
         if (scalar @san_template_keys > 0) {
 
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "SCEP san rendering enabled ( $profile / $subject_style ) ",
                 PRIORITY => 'info',
                 FACILITY => ['application'],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->info("SCEP san rendering enabled ( $profile / $subject_style ) ");
+            #LOGMIGRATE 
 
             my $csr_info = $csr_obj->get_subject_alt_names({ FORMAT => 'HASH' });
             @subject_alt_names = @{CTX('api')->render_san_from_template({
@@ -313,11 +353,15 @@ sub execute {
     my $is_self_signed = ($csr_pubkey_hash eq $x509_pubkey_hash ? 1 : 0);
     $context->param('signer_is_self_signed' => $is_self_signed);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "SCEP signer subject: " . $signer_subject . ($is_self_signed ? ' - is selfsign' : ''),
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("SCEP signer subject: " . $signer_subject . ($is_self_signed ? ' - is selfsign' : ''));
+    #LOGMIGRATE 
 
     # Check if revoked in the database
 

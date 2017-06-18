@@ -27,12 +27,16 @@ sub validate {
         my $object = OpenXPKI::DN->new ($subject);
     };
     if ($EVAL_ERROR)
-    {        
-	    CTX('log')->log(
-    	    MESSAGE  => "Could not create DN object from subject '$subject'",
-    	    PRIORITY => 'error',
-    	    FACILITY => 'application',
-	    );
+    {
+=cut LOGMIGRATE
+        CTX('log')->log(
+            MESSAGE  => "Could not create DN object from subject '$subject'",
+            PRIORITY => 'error',
+            FACILITY => 'application',
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Could not create DN object from subject '$subject'");
+        #LOGMIGRATE
 
         validation_error('I18N_OPENXPKI_UI_VALIDATOR_CERT_SUBJECT_MATCH_INVALID_FORMAT');
     }
@@ -54,13 +58,17 @@ sub validate {
             push @errors, { label => $label, regex => $regex, subject => $subject };
         }
     }
-    
-    if (@errors) {        
-	    CTX('log')->log(
-    	    MESSAGE  => "Certificate subject validation error for subject '$subject'",
-    	    PRIORITY => 'error',
-    	    FACILITY => 'application',
-	    );
+
+    if (@errors) {
+=cut LOGMIGRATE
+        CTX('log')->log(
+            MESSAGE  => "Certificate subject validation error for subject '$subject'",
+            PRIORITY => 'error',
+            FACILITY => 'application',
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Certificate subject validation error for subject '$subject'");
+        #LOGMIGRATE
         validation_error ( 'I18N_OPENXPKI_UI_VALIDATOR_CERT_SUBJECT_MATCH_FAILED', { invalid_fields => \@errors } );
     }
 
@@ -80,7 +88,7 @@ OpenXPKI::Server::Workflow::Validator::CertSubject
    validate_subject_against_regex:
        class: OpenXPKI::Server::Workflow::Validator::CertSubject
        arg:
-        - $cert_profile 
+        - $cert_profile
         - $cert_subject_style
         - $cert_subject
 
@@ -89,4 +97,4 @@ OpenXPKI::Server::Workflow::Validator::CertSubject
 This validator checks a given subject according to the profile configuration.
 
 B<NOTE>: If you pass an empty string (or no string) to this validator
-it will not throw an error. 
+it will not throw an error.

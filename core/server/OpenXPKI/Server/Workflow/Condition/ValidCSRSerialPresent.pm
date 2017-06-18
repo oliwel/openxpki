@@ -24,11 +24,15 @@ sub evaluate {
         condition_error('I18N_OPENXPKI_SERVER_WORKFLOW_CONDITION_VALIDCSRSERIALPRESENT_NO_CSR_SERIAL_PRESENT');
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Testing for CSR serial $csr_serial",
         PRIORITY => 'debug',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Testing for CSR serial $csr_serial");
+    #LOGMIGRATE 
 
     CTX('dbi')->select_one(
         from => 'csr',

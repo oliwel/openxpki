@@ -66,11 +66,15 @@ sub _validate {
     
     if (!grep(/$key_alg/, @{$algs})) {
         ##! 8: "KeyParam validation failed on algo $key_alg"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "KeyParam validation failed on algo $key_alg",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("KeyParam validation failed on algo $key_alg");
+        #LOGMIGRATE 
         validation_error('I18N_OPENXPKI_UI_VALIDATOR_KEY_PARAM_ALGO_NOT_ALLOWED');
     }
     
@@ -87,21 +91,29 @@ sub _validate {
         ##! 32: "Validate param $param, $val, " . Dumper \@expect 
         if (!grep(/$val/, @expect)) {
             ##! 32: 'Failed on ' . $val
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "KeyParam validation failed on $param with value $val",
                 PRIORITY => 'error',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->error("KeyParam validation failed on $param with value $val");
+            #LOGMIGRATE 
             validation_error("I18N_OPENXPKI_UI_VALIDATOR_KEY_PARAM_PARAM_NOT_ALLOWED ($param)");
         }
     }
 
     ##! 1: 'Validation succeeded'
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "KeyParam validation succeeded",
         PRIORITY => 'debug',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("KeyParam validation succeeded");
+    #LOGMIGRATE 
         
     return 1;
 }

@@ -147,11 +147,15 @@ sub __persistCertificateInformation {
             $ca_id = $issuer->{identifier};
         } else {
             $ca_id = 'unknown';
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "NICE certificate issued with unknown issuer! ($identifier / ".$cert_data->{issuer_dn}.")",
                 PRIORITY => 'warn',
                 FACILITY => 'application'
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("NICE certificate issued with unknown issuer! ($identifier / ".$cert_data->{issuer_dn}.")");
+            #LOGMIGRATE 
 
         }
     }

@@ -55,11 +55,15 @@ sub execute {
     $params->{VALUE} = undef;
 
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Remove datapool entry for key '.$params->{KEY}.' in namespace '.$params->{NAMESPACE},
         PRIORITY => 'info',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Remove datapool entry for key '.$params->{KEY}.' in namespace '.$params->{NAMESPACE});
+    #LOGMIGRATE 
 
     CTX('api')->set_data_pool_entry($params);
     return 1;

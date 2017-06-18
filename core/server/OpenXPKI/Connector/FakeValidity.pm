@@ -56,11 +56,15 @@ sub get {
 
     $notafter->add( days => $diff_day );
 
+=cut LOGMIGRATE
     CTX('log')->log(
        MESSAGE => "certificate validity adjusted from ". $org_notafter ." to ". $notafter->strftime("%Y-%m-%d %H:%M:%S"),
        PRIORITY => 'debug',
        FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("certificate validity adjusted from ". $org_notafter ." to ". $notafter->strftime("%Y-%m-%d %H:%M:%S"));
+    #LOGMIGRATE 
 
     return $notafter->strftime("%Y%m%d%H%M%S");
 }

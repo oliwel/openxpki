@@ -117,11 +117,15 @@ sub _validate {
 
     ## did we find any errors?
     if (@fields_with_error) {
+=cut LOGMIGRATE
 	   CTX('log')->log(
     	    MESSAGE  => "Certificate subject validation error",
     	    PRIORITY => 'error',
     	    FACILITY => 'application',
     	);
+=cut LOGMIGRATE
+	   CTX('log')->application()->error("Certificate subject validation error");
+	   #LOGMIGRATE 
         validation_error ('I18N_OPENXPKI_UI_VALIDATOR_CERT_SUBJECT_FIELD_HAS_ERRORS', { invalid_fields => \@fields_with_error } );
     }
  

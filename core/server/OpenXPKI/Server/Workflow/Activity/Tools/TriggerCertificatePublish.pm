@@ -44,11 +44,15 @@ sub execute {
             !CTX('config')->get_scalar_as_list(['profile', 'default', 'publish' ] )) {
 
             ##! 32: 'Publishing not enabled for profile ' . $cert_profile
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => 'Publishing not enabled for profile ' . $cert_profile,
                 PRIORITY => 'debug',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug('Publishing not enabled for profile ' . $cert_profile);
+            #LOGMIGRATE 
             return 1;
         }        
     }
@@ -59,11 +63,15 @@ sub execute {
         PARAMS        => $params
     });
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => 'Publishing workflow created with id ' . $wf_info->{WORKFLOW}->{ID},
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Publishing workflow created with id ' . $wf_info->{WORKFLOW}->{ID});
+    #LOGMIGRATE 
 
     ##! 16: 'Publishing Workflow created with id ' . $wf_info->{WORKFLOW}->{ID}
 

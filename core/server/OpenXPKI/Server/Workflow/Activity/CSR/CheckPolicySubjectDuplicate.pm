@@ -27,11 +27,15 @@ sub execute
     # prevent creating havoc (subject is empty = no where query!)
     if (!$cert_subject) {
         $context->param( { $target_key => undef } );
+=cut LOGMIGRATE
          CTX('log')->log(
             MESSAGE => "Policy subject duplicate check skipped due to empty subject",
             PRIORITY => 'debug',
             FACILITY => [ 'application', ],
         );
+=cut LOGMIGRATE
+         CTX('log')->application()->debug("Policy subject duplicate check skipped due to empty subject");
+         #LOGMIGRATE 
         return 1;
     }
 

@@ -128,11 +128,15 @@ sub execute
     if (@errors) {
         $context->param('check_policy_dns', $ser->serialize(\@errors) );
                 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Policy DNS check failed on " . scalar @errors . " items",
             PRIORITY => 'info',
             FACILITY => [ 'application', ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("Policy DNS check failed on " . scalar @errors . " items");
+        #LOGMIGRATE 
                 
     } else {
         $context->param( { 'check_policy_dns' => undef } );        

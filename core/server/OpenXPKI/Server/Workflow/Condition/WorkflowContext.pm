@@ -61,11 +61,15 @@ sub evaluate
     my $context_key = $self->context_key();
     my $condition = $self->condition();
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Testing context $context_key for $condition", 
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
-    ); 
+    );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Testing context $context_key for $condition");
+    #LOGMIGRATE  
 
     my $context_value = $context->param($context_key);
 

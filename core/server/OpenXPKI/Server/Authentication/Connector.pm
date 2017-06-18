@@ -109,11 +109,15 @@ sub login_step {
    
     if ($result) {        
         # result ok - return user, role, service ready message
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Login successful for user $account with role " . $self->role(),
             PRIORITY => 'info',
             FACILITY => ['auth']
         );
+=cut LOGMIGRATE
+        CTX('log')->auth()->info("Login successful for user $account with role " . $self->role());
+        #LOGMIGRATE 
         return ($account, $self->role(), { SERVICE_MSG => 'SERVICE_READY', });         
     }
     

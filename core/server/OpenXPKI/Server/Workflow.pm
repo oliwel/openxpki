@@ -155,11 +155,15 @@ sub execute_action {
     ##! 16: 'set proc_state "running"'
     $self->_set_proc_state('running'); # writes workflow metadata
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Execute action $action_name on workflow #" . $self->id,
         PRIORITY => "info",
         FACILITY => "application"
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("Execute action $action_name on workflow #" . $self->id);
+    #LOGMIGRATE 
 
     my $state='';
     # the double eval construct is used, because the handling of a caught pause throws a runtime error as real exception,
@@ -222,11 +226,15 @@ sub execute_action {
             ( $e->message_code() eq 'I18N_OPENXPKI_SERVER_WORKFLOW_ERROR_ON_EXECUTE') ) {
 
             ##! 16: 'bubbled up error - rethrow'
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Bubble up error from nested action",
                 PRIORITY => "debug",
                 FACILITY => "application"
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("Bubble up error from nested action");
+            #LOGMIGRATE 
 
             $e->rethrow;
         }
@@ -478,27 +486,39 @@ sub _handle_proc_state{
     #we COULD use symbolic references to method-calls here, but - for the moment - we handle it explizit:
     if($action_needed eq '_wake_up'){
         ##! 1: 'paused, call wakeup '
+=cut LOGMIGRATE
          CTX('log')->log(
             MESSAGE  => "Action $action_name waking up",
             PRIORITY => "debug",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+         CTX('log')->application()->debug("Action $action_name waking up");
+         #LOGMIGRATE 
         $self->_wake_up($action_name);
     }elsif($action_needed eq '_resume'){
         ##! 1: 'call _resume '
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Action $action_name resume",
             PRIORITY => "debug",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Action $action_name resume");
+        #LOGMIGRATE 
         $self->_resume($action_name);
     }elsif($action_needed eq '_runtime_exception'){
         ##! 1: 'call _runtime_exception '
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Action $action_name runtime exception",
             PRIORITY => "debug",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Action $action_name runtime exception");
+        #LOGMIGRATE 
         $self->_runtime_exception($action_name);
     }else{
         OpenXPKI::Exception->throw (
@@ -679,17 +699,25 @@ sub _fail {
     };
 
     if ($reason eq 'autofail') {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Auto-Fail workflow ".$self->id." after action ".$self->{_CURRENT_ACTION}." with error " . $error,
             PRIORITY => "error",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Auto-Fail workflow ".$self->id." after action ".$self->{_CURRENT_ACTION}." with error " . $error);
+        #LOGMIGRATE 
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Forced Fail for workflow ".$self->id." after action ".$self->{_CURRENT_ACTION},
             PRIORITY => "info",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("Forced Fail for workflow ".$self->id." after action ".$self->{_CURRENT_ACTION});
+        #LOGMIGRATE 
     }
 
 }

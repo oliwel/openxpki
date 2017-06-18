@@ -106,11 +106,15 @@ sub execute {
                     FACILITY => [ 'application' ],
                 );
             } elsif ($on_error eq 'skip') {
+=cut LOGMIGRATE
                 CTX('log')->log(
                     MESSAGE => "CA pubication failed for target $target and skip is set",
                     PRIORITY => 'warn',
                     FACILITY => [ 'application' ],
                 );
+=cut LOGMIGRATE
+                CTX('log')->application()->warn("CA pubication failed for target $target and skip is set");
+                #LOGMIGRATE 
             } else {
                 OpenXPKI::Exception->throw(
                     message => 'I18N_OPENXPKI_SERVER_WORKFLOW_ACTIVITY_PUBLICATION_FAILED',
@@ -121,11 +125,15 @@ sub execute {
                 );
             }
         } else {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => "CA pubication to $target for ". $data->{dn}{CN}[0]." done",
                 PRIORITY => 'debug',
                 FACILITY => [ 'application' ],
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("CA pubication to $target for ". $data->{dn}{CN}[0]." done");
+            #LOGMIGRATE 
         }
     }
   

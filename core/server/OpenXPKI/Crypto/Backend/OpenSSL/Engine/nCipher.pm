@@ -200,29 +200,41 @@ sub key_usable {
     if ($EVAL_ERROR) {
         alarm 0;
         if ($EVAL_ERROR ne "alarm\n") {            
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => 'nCipher key_usable failed with ' . $EVAL_ERROR,
                 PRIORITY => 'error',
                 FACILITY => 'system',
-            );            
+            );
+=cut LOGMIGRATE
+            CTX('log')->system()->error('nCipher key_usable failed with ' . $EVAL_ERROR);
+            #LOGMIGRATE             
             return 0;            
         }
         ##! 4: "nCipher nfkminfo did not terminate within timeout and was interrupted administratively"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'nCipher key_usable command timeout',
             PRIORITY => 'error',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error('nCipher key_usable command timeout');
+        #LOGMIGRATE 
         return 0;
     }
     
     if ($CHILD_ERROR != 0) {
         ##! 4: "nCipher nfkminfo returned error code $CHILD_ERROR"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'nCipher key_usable command returned with error: ' . $CHILD_ERROR,
             PRIORITY => 'error',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error('nCipher key_usable command returned with error: ' . $CHILD_ERROR);
+        #LOGMIGRATE 
         return 0;
     }
 
@@ -237,21 +249,29 @@ sub key_usable {
 
     if (! $initialized) {
         ##! 4: "security world is not initialized"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'nCipher security world not initialized',
             PRIORITY => 'error',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error('nCipher security world not initialized');
+        #LOGMIGRATE 
         return 0;
     }
     
     if (! $usable) {
         ##! 4: "security world is not usable"
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => 'nCipher security world not usable',
             PRIORITY => 'error',
             FACILITY => 'system',
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error('nCipher security world not usable');
+        #LOGMIGRATE 
         return 0;
     }
 

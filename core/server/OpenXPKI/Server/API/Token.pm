@@ -449,21 +449,29 @@ sub is_token_usable {
 
     # Shortcut method, ask the token engine
     if ($keys->{ENGINE}) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Check if token is usable using engine',
             PRIORITY => "debug",
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug('Check if token is usable using engine');
+        #LOGMIGRATE 
         return $token->key_usable()
     }
 
     eval {
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Check if token is usable using crypto operation',
             PRIORITY => "debug",
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug('Check if token is usable using crypto operation');
+        #LOGMIGRATE 
 
         my $probe = 'OpenXPKI Encryption Test';
 

@@ -58,18 +58,26 @@ sub evaluate
             : $dt_now;
             
         if ($dt_probe <= $dt_notbefore) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "DateTime condition failed $key $dt_probe < $dt_notbefore",
                 PRIORITY => 'info',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->info("DateTime condition failed $key $dt_probe < $dt_notbefore");
+            #LOGMIGRATE 
             condition_error ("$key $dt_probe is less then notbefore $dt_notbefore");        
         }
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "DateTime condition passed $key $dt_probe > $dt_notbefore",
             PRIORITY => 'info',
             FACILITY => 'application',
-        );                
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("DateTime condition passed $key $dt_probe > $dt_notbefore");
+        #LOGMIGRATE                 
     }
     
     if (defined $notafter) {  
@@ -82,19 +90,27 @@ sub evaluate
             : $dt_now;
         
         if ($dt_probe >= $dt_notafter) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "DateTime condition failed - $key $dt_probe > $dt_notafter",
                 PRIORITY => 'debug',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug("DateTime condition failed - $key $dt_probe > $dt_notafter");
+            #LOGMIGRATE 
             condition_error ("$key $dt_probe is larger then notafter $dt_notafter");        
         }
             
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "DateTime condition passed $key $dt_probe < $dt_notafter",
             PRIORITY => 'debug',
             FACILITY => 'application',
-        );        
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("DateTime condition passed $key $dt_probe < $dt_notafter");
+        #LOGMIGRATE         
     }
     
     return 1;

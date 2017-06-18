@@ -54,11 +54,15 @@ sub _evaluate {
 
     ##! 16: 'status: ' . $cert->{'STATUS'}
     if ($cert->{status} ne $expected_status) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Cert status check failed: ".$cert->{status}. " != ".$expected_status,
             PRIORITY => 'debug',
             FACILITY => [ 'application' ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Cert status check failed: ".$cert->{status}. " != ".$expected_status);
+        #LOGMIGRATE 
         condition_error 'I18N_OPENXPKI_UI_CONDITION_CERTIFICATE_HAS_STATUS_DOES_NOT_MATCH';
     }
 

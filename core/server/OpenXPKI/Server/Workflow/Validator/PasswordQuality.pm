@@ -42,11 +42,15 @@ sub validate {
     ## prepare the environment
     if (my $reason = IsBadPassword($password)) {
         ##! 16: 'bad password entered: ' . $reason
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Validator password quality failed: " . $reason ,
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Validator password quality failed: " . $reason );
+        #LOGMIGRATE 
         validation_error("I18N_OPENXPKI_UI_PASSWORD_QUALITY_BAD_PASSWORD");
     }
     return 1;

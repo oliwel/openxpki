@@ -50,11 +50,15 @@ sub create_workflow {
 
     ##! 2: "BTW we shredder many workflow IDs here"
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Created workflow ID $id.",
         PRIORITY => "info",
         FACILITY => "workflow"
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("Created workflow ID $id.");
+    #LOGMIGRATE 
 
     return $id;
 }

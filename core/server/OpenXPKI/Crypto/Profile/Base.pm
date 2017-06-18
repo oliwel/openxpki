@@ -92,11 +92,15 @@ sub load_extension
         $critical = 'true';
     } else {
         if (!(defined $critical || $ext eq 'oid' )) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Critical flag is not set for $ext in profile $profile_path!",
                 PRIORITY => 'warn',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->warn("Critical flag is not set for $ext in profile $profile_path!");
+            #LOGMIGRATE 
         }
         $critical = 'false';
     }

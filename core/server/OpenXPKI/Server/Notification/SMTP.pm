@@ -275,11 +275,15 @@ sub _init_smime {
         my $pkcs12 = OpenXPKI::FileUtils->read_file( $cfg->{certificate_p12_file} );
         $smime = Crypt::SMIME->new()->setPrivateKeyPkcs12($pkcs12, $cfg->{certificate_key_password});
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Enable SMIME signer for notification backend (PKCS12)",
             PRIORITY => "debug",
             FACILITY => "application",
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Enable SMIME signer for notification backend (PKCS12)");
+        #LOGMIGRATE 
 
     } elsif( $cfg->{certificate_key_file} )  {
 
@@ -287,11 +291,15 @@ sub _init_smime {
         my $cert = OpenXPKI::FileUtils->read_file( $cfg->{certificate_file} );
         $smime = Crypt::SMIME->new()->setPrivateKey( $key, $cert, $cfg->{certificate_key_password} );
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Enable SMIME signer for notification backend",
             PRIORITY => "debug",
             FACILITY => "application",
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Enable SMIME signer for notification backend");
+        #LOGMIGRATE 
 
     }
 
@@ -328,11 +336,15 @@ sub notify {
     ##! 16: 'Found handles ' . Dumper @handles
 
     if (!@handles) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "No notifcations to send for $msgconfig",
             PRIORITY => "debug",
             FACILITY => "application",
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("No notifcations to send for $msgconfig");
+        #LOGMIGRATE 
         return undef;
     }
 
@@ -423,11 +435,15 @@ sub notify {
         }
 
         if (!$vars{to}) {
+=cut LOGMIGRATE
         	CTX('log')->log(
             	MESSAGE  => "Failed sending notification - no receipient",
             	PRIORITY => "warn",
             	FACILITY => "application",
 	        );
+=cut LOGMIGRATE
+        	CTX('log')->application()->warn("Failed sending notification - no receipient");
+        	#LOGMIGRATE 
 	        push @failed, $handle;
 	        next MAIL_HANDLE;
         }
@@ -466,11 +482,15 @@ sub _render_receipient {
 
     if ($mail !~ /^[\w\.-]+\@[\w\.-]+$/) {
         ##! 8: 'This is not an address ' . $mail
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Not a mail address: $mail",
             PRIORITY => "warn",
             FACILITY => "application",
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->warn("Not a mail address: $mail");
+        #LOGMIGRATE 
         return undef;
     }
 
@@ -492,21 +512,29 @@ sub _send_plain {
     my $output = $self->_render_template_file( $self->template_dir().$cfg->{template}.'.txt', $vars );
 
     if (!$output) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Mail body is empty ($cfg->{template})",
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Mail body is empty ($cfg->{template})");
+        #LOGMIGRATE 
         return 0;
     }
 
     my $subject = $self->_render_template( $cfg->{subject}, $vars );
     if (!$subject) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Mail subject is empty ($cfg->{template})",
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Mail subject is empty ($cfg->{template})");
+        #LOGMIGRATE 
         return 0;
     }
 
@@ -526,11 +554,15 @@ sub _send_plain {
 
     my $smtp = $self->transport();
     if (!$smtp) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => sprintf("Failed sending notification - no smtp transport"),
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error(sprintf("Failed sending notification - no smtp transport"));
+        #LOGMIGRATE 
         return undef;
     }
 
@@ -590,22 +622,30 @@ sub _send_html {
     my $html = $self->_render_template_file( $self->template_dir().$cfg->{template}.'.html', $vars );
 
     if (!$plain && !$html) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Both mail parts are empty ($cfg->{template})",
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Both mail parts are empty ($cfg->{template})");
+        #LOGMIGRATE 
         return 0;
     }
 
     # Parse the subject
     my $subject = $self->_render_template($cfg->{subject}, $vars);
     if (!$subject) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Mail subject is empty ($cfg->{template})",
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("Mail subject is empty ($cfg->{template})");
+        #LOGMIGRATE 
         return 0;
     }
 
@@ -696,11 +736,15 @@ sub _send_html {
     my $smtp = $self->transport();
 
     if (!$smtp) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => sprintf("Failed sending notification - no smtp transport"),
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error(sprintf("Failed sending notification - no smtp transport"));
+        #LOGMIGRATE 
         return undef;
     }
 

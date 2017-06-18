@@ -107,17 +107,25 @@ sub execute {
             $context->param( 'revocation_time' => $revoke_on_replace->{invalidity_time} || 0 );
         }
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP replace for old csr " . $cert->{req_key} . " with profile " . $old_profile->{profile},
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP replace for old csr " . $cert->{req_key} . " with profile " . $old_profile->{profile});
+        #LOGMIGRATE 
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP renewal from old csr " . $cert->{req_key} . " with profile " . $old_profile->{profile},
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP renewal from old csr " . $cert->{req_key} . " with profile " . $old_profile->{profile});
+        #LOGMIGRATE 
         $context->param( 'renewal_mode' => 'renew' );
     }
 

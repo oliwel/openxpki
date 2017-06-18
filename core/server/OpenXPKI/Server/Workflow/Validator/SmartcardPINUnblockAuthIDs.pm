@@ -132,11 +132,15 @@ sub validate {
     }
 
     if ( scalar @{$errors} ) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Errors valdiating authorizing persons",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Errors valdiating authorizing persons");
+        #LOGMIGRATE 
 
         #		validation_error($errors->[scalar @{$errors} -1]);
         validation_error( Dumper($errors) );

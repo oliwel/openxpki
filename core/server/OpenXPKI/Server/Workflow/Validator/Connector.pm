@@ -43,11 +43,15 @@ sub _validate {
     
     ##! 32: 'Raw result is ' . (defined $result ? $result : 'undef')
     if (!$result) {              
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Validator failed on path " . $self->path(),
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Validator failed on path " . $self->path());
+        #LOGMIGRATE 
         validation_error( $self->error() );
         return 0;
     }

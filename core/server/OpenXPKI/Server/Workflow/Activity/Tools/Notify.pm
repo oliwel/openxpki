@@ -52,11 +52,15 @@ sub execute {
         ##! 32: 'Found persisted data: ' . Dumper $handles  
     }
     
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Trigger notification message ' .$message,    
         PRIORITY => 'info',
         FACILITY => [ 'application' ],
-    );  
+    );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('Trigger notification message ' .$message);
+    #LOGMIGRATE   
     
     # Re-Assign the handles from the return value 
     $handles = CTX('notification')->notify({

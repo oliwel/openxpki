@@ -208,11 +208,15 @@ sub execute
     $approvals = $serializer->serialize(\@approvals);
     ##! 64: 'approvals serialized: ' . Dumper $approvals
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Total number of approvals ' . scalar @approvals,
         PRIORITY => 'debug',
         FACILITY => [ 'application' ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug('Total number of approvals ' . scalar @approvals);
+    #LOGMIGRATE 
 
     $context->param ('approvals' => $approvals);
 

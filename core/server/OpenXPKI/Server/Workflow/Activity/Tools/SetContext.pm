@@ -40,11 +40,15 @@ sub execute
 		    $context->param($key => $value);
 	    }
          
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "Setting context $key to $value",
             PRIORITY => 'debug',
             FACILITY => [ 'application', ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("Setting context $key to $value");
+        #LOGMIGRATE 
     }
              
     return 1;

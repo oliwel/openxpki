@@ -66,11 +66,15 @@ sub execute {
     my %ca_identifier;
     while (my $entry = $sth->fetchrow_hashref) {
         ##! 16: ' ca has revoked certificates pending ' . $entry->{'CERTIFICATE.ISSUER_IDENTIFIER'}
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'ca has revoked certificates pending ' . $entry->{issuer_identifier},
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug('ca has revoked certificates pending ' . $entry->{issuer_identifier});
+        #LOGMIGRATE 
         $ca_identifier{$entry->{issuer_identifier}} = 1;
     }
 
@@ -125,11 +129,15 @@ sub execute {
 
         if ($crl) {
             ##! 32: ' ca '. $ca->{IDENTIFIER} .' has crl beyond next renewal date '
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => ' ca '. $ca->{IDENTIFIER} .' has crl beyond next renewal date ',
                 PRIORITY => 'debug',
                 FACILITY => 'application',
             );
+=cut LOGMIGRATE
+            CTX('log')->application()->debug(' ca '. $ca->{IDENTIFIER} .' has crl beyond next renewal date ');
+            #LOGMIGRATE 
             next;
         }
 

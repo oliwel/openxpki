@@ -81,11 +81,15 @@ sub _init_backends_for_realm {
         my $class = $config->get("notification.$backend.backend.class");         
         
         if (!$class) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "No class set for notification backend $backend",
                 PRIORITY => "error",
                 FACILITY => "system",
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->error("No class set for notification backend $backend");
+            #LOGMIGRATE 
             next INIT_BACKEND;
         }
         

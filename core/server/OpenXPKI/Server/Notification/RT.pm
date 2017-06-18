@@ -110,11 +110,15 @@ sub notify {
     ##! 32: 'Template vars: ' . Dumper $template_vars
         
     if (!@handles) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "No notifcations to send for $msgconfig",
             PRIORITY => "debug",
             FACILITY => "system",
-        );  
+        );
+=cut LOGMIGRATE
+        CTX('log')->system()->debug("No notifcations to send for $msgconfig");
+        #LOGMIGRATE   
         return 0;
     }
      
@@ -236,11 +240,15 @@ sub notify {
         $token->{$handle} = $pi;
     
         if ($EVAL_ERROR) {
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE => 'RT action failed on ticket ' . $pi->{ticket} . ' with ' .  $EVAL_ERROR,
                 PRIORITY => 'error',
                 FACILITY => 'system',
             );
+=cut LOGMIGRATE
+            CTX('log')->system()->error('RT action failed on ticket ' . $pi->{ticket} . ' with ' .  $EVAL_ERROR);
+            #LOGMIGRATE 
         }
     } # end handle
     
@@ -302,11 +310,15 @@ sub _rt_open {
     # Store again     
     $ticket->store();
     
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'Opening new RT ticket - id ' . $ticket->id,
         PRIORITY => 'info',
         FACILITY => 'system'
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->info('Opening new RT ticket - id ' . $ticket->id);
+    #LOGMIGRATE 
         
     ##! 32: 'Ticket ' . Dumper $ticket
     

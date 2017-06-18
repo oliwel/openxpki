@@ -65,11 +65,15 @@ sub execute
         ##! 32: 'Unset queue - no certs to revoke'        
         $context->param('tmp_queue' =>  );
         
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP autorevoke - no active certs", 
             PRIORITY => 'info',
             FACILITY => 'application',
-        );      
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("SCEP autorevoke - no active certs");
+        #LOGMIGRATE       
     }
     
        

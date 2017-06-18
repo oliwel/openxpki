@@ -86,11 +86,15 @@ sub execute
     print FD $msg;
     close FD;
     
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => 'serialized workflow for export in ' . $filename, 
         PRIORITY => 'info',
         FACILITY => [ 'application' ],
-    );   
+    );
+=cut LOGMIGRATE
+    CTX('log')->application()->info('serialized workflow for export in ' . $filename);
+    #LOGMIGRATE    
 
     # workflow is now serialized in the export directory
 }

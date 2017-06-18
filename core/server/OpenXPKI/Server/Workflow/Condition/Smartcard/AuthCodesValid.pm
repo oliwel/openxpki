@@ -77,11 +77,15 @@ sub evaluate {
         return -1;
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Auth codes checked.",
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Auth codes checked.");
+    #LOGMIGRATE 
 
     return 1
 

@@ -397,11 +397,15 @@ sub _sig_hup {
         force => 1,
     });
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => 'Watchdog worker reloaded',
         PRIORITY => "info",
         FACILITY => "system",
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->info('Watchdog worker reloaded');
+    #LOGMIGRATE 
     return;
 }
 
@@ -415,11 +419,15 @@ sub _sig_term {
     ##! 1: 'Got TERM'
     $OpenXPKI::Server::Watchdog::terminate  = 1;
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Watchdog worker $$ got term signal - cleaning up.",
         PRIORITY => "info",
         FACILITY => "system",
     );
+=cut LOGMIGRATE
+    CTX('log')->system()->info("Watchdog worker $$ got term signal - cleaning up.");
+    #LOGMIGRATE 
 
     return;
 }
@@ -442,20 +450,28 @@ sub reload {
 
     # Terminate if we have a watchdog where we should not have one
     if ($disabled and scalar @{$pids->{watchdog}}) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Watchdog should not run - terminating.',
             PRIORITY => "info",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->info('Watchdog should not run - terminating.');
+        #LOGMIGRATE 
         kill 'TERM', @{$pids->{watchdog}};
     }
     # Start watchdog if not running
     elsif (not scalar @{$pids->{watchdog}}) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Watchdog missing - starting it.',
             PRIORITY => "info",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->info('Watchdog missing - starting it.');
+        #LOGMIGRATE 
         CTX('watchdog')->run();
     }
     # Signal reload
@@ -483,17 +499,25 @@ sub terminate {
 
     if (scalar $pids->{watchdog}) {
         kill 'TERM', @{$pids->{watchdog}};
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Told watchdog to terminate',
             PRIORITY => "info",
             FACILITY => "system",
        );
+=cut LOGMIGRATE
+        CTX('log')->system()->info('Told watchdog to terminate');
+        #LOGMIGRATE 
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'No watchdog pids to terminate',
             PRIORITY => "error",
             FACILITY => "system",
        );
+=cut LOGMIGRATE
+        CTX('log')->system()->error('No watchdog pids to terminate');
+        #LOGMIGRATE 
     }
 
     return 1;
@@ -720,11 +744,15 @@ sub __wake_up_workflow {
     }
 
     if ($error_msg) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => $error_msg,
             PRIORITY => "error",
             FACILITY => "system"
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error($error_msg);
+        #LOGMIGRATE 
     }
 
     # The child MUST TERMINATE!

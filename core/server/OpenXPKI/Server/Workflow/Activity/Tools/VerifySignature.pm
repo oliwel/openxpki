@@ -24,11 +24,15 @@ sub execute
     $context->param($target_key => 0);
     
     if (!$pkcs7) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "No signature found",
             PRIORITY => 'debug',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("No signature found");
+        #LOGMIGRATE 
         return 1;
     }
     

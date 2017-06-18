@@ -95,11 +95,15 @@ sub fetch_unfiltered_workflow {
         FILTER   => 0,
     });
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => 'Unfiltered access to workflow ' . $wf->id . ' by ' . CTX('session')->get_user() . ' with role ' . CTX('session')->get_role(),
         PRIORITY => 'info',
         FACILITY => 'audit',
     );
+=cut LOGMIGRATE
+    CTX('log')->audit()->info('Unfiltered access to workflow ' . $wf->id . ' by ' . CTX('session')->get_user() . ' with role ' . CTX('session')->get_role());
+    #LOGMIGRATE 
 
     return $wf;
 

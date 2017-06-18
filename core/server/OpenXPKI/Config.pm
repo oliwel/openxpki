@@ -98,11 +98,15 @@ sub update_head {
         ##! 16: 'Advance to head commit ' . $head_id
         $self->_head_version( $head_id );
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "system config advanced to new head commit: $head_id",
             PRIORITY => "info",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->info("system config advanced to new head commit: $head_id");
+        #LOGMIGRATE 
 
         return 1;
     }
@@ -157,11 +161,15 @@ sub get_scalar_as_list {
         my $val = ( $self->get( $path ) );
         @values = ( $val ) if (defined $val);
     } else {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "get_scalar_as_list got invalid node type",
             PRIORITY => "error",
             FACILITY => "system",
         );
+=cut LOGMIGRATE
+        CTX('log')->system()->error("get_scalar_as_list got invalid node type");
+        #LOGMIGRATE 
     }
     ##! 16: 'values ' . Dumper @values
     return @values;

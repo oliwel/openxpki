@@ -189,11 +189,15 @@ sub execute
 
     $context->param('csr_serial' => $csr_serial);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "persisted csr for $subject with csr_serial $csr_serial",
         PRIORITY => 'info',
         FACILITY => 'application',
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("persisted csr for $subject with csr_serial $csr_serial");
+    #LOGMIGRATE 
 }
 
 1;

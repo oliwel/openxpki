@@ -21,11 +21,15 @@ sub execute {
 
     $context->param('error_code' => $error_code);
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Set error code $error_code for workflow " . $workflow->id,
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
-    );         
+    );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Set error code $error_code for workflow " . $workflow->id);
+    #LOGMIGRATE          
 
     return 1;
 }

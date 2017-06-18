@@ -26,11 +26,15 @@ sub create_workflow {
     my $workflow = shift;
     ##! 1: "create volatile workflow"
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Created volatile workflow for type ".$workflow->type(),
         PRIORITY => "info",
         FACILITY => "workflow"
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("Created volatile workflow for type ".$workflow->type());
+    #LOGMIGRATE 
 
     return 0;
 }

@@ -34,11 +34,15 @@ sub _validate {
         'removeFromCRL',
     );
     
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => 'Call to deprecated class OpenXPKI::Server::Workflow::Validator::ReasonCode',
         PRIORITY => "warn",
         FACILITY => "application"
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->warn('Call to deprecated class OpenXPKI::Server::Workflow::Validator::ReasonCode');
+    #LOGMIGRATE 
     
     my $codes = $self->param('valid_reason_codes');
     if ($codes) {
@@ -47,11 +51,15 @@ sub _validate {
     
     if (! grep { $_ eq $reason_code} @valid_reason_codes) {
         
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => 'Got invalid reason code: ' . $reason_code,
             PRIORITY => "error",
             FACILITY => "application"
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error('Got invalid reason code: ' . $reason_code);
+        #LOGMIGRATE 
         validation_error('I18N_OPENXPKI_SERVER_WORKFLOW_VALIDATOR_REASON_CODE_INVALID');
     }
     return 1;

@@ -127,11 +127,15 @@ sub issueCertificate {
 
     ##! 32: 'issuing ca: ' . $issuing_ca
 
+=cut LOGMIGRATE
     CTX('log')->log(
        MESSAGE => "try to issue csr $csr_serial using token $issuing_ca",
        PRIORITY => 'debug',
        FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("try to issue csr $csr_serial using token $issuing_ca");
+    #LOGMIGRATE 
 
     my $default_token = CTX('api')->get_default_token();
     my $ca_token = CTX('crypto_layer')->get_token({

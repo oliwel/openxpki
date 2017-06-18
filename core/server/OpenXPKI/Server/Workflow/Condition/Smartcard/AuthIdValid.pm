@@ -43,11 +43,15 @@ sub evaluate {
 		return -1;
 	}
 	
+=cut LOGMIGRATE
 	 CTX('log')->log(
         MESSAGE => "AuthId checked.",
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
-    ); 
+    );
+=cut LOGMIGRATE
+	 CTX('log')->application()->debug("AuthId checked.");
+	 #LOGMIGRATE  
 	return 1;
 }
 

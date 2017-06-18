@@ -27,11 +27,15 @@ sub validate {
     ##! 1: 'start'
 
     if (!defined $value || $value eq '') {
+=cut LOGMIGRATE
          CTX('log')->log(
             MESSAGE  => "Regex validator skipped - value is empty",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+         CTX('log')->application()->info("Regex validator skipped - value is empty");
+         #LOGMIGRATE 
         return 1;
     }
 
@@ -87,11 +91,15 @@ sub validate {
         # Need to implement this in New UI first
         #$wf->context()->param( '__error' => [ $self->error(), { FIELD => $field, VALUES => \@errors }]);
         ##! 32: 'Regex errors with regex ' . $regex. ', values '  . Dumper \@errors
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Regex validator failed on regex $regex",
             PRIORITY => 'error',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->error("Regex validator failed on regex $regex");
+        #LOGMIGRATE 
         my @fields_with_error = ({ name => 'link', error => $self->error() }); 
         validation_error( $self->error(), { invalid_fields => \@fields_with_error } );
         

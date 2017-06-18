@@ -63,11 +63,15 @@ sub execute {
     });
 
     if (not defined $metadata) {
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "No metadata for $profile / $style ",
             PRIORITY => 'info',
             FACILITY => 'application',
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->info("No metadata for $profile / $style ");
+        #LOGMIGRATE 
         return 1;
     }
 

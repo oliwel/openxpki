@@ -33,11 +33,15 @@ sub execute
             # attribute backend will write empty values
             $workflow->attrib({ $key => undef });
         }
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Writing workflow attribute $key => $val",
             PRIORITY => "debug",
             FACILITY => "workflow"
-        );           
+        );
+=cut LOGMIGRATE
+        CTX('log')->workflow()->debug("Writing workflow attribute $key => $val");
+        #LOGMIGRATE            
     }    
 
     return;

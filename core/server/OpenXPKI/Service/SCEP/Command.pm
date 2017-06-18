@@ -194,11 +194,15 @@ sub __get_token_alias {
     if ($token) {
         # Special token group requested
         $scep_token_alias = CTX('api')->get_token_alias_by_group({ 'GROUP' => $token });
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "SCEP command requested special token ($token -> $scep_token_alias)",
             PRIORITY => 'debug',
             FACILITY => 'application',
-        );        
+        );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("SCEP command requested special token ($token -> $scep_token_alias)");
+        #LOGMIGRATE         
     } else {
         # Use the default token group        
         $scep_token_alias = CTX('api')->get_token_alias_by_type( { TYPE => 'scep' } );

@@ -135,11 +135,15 @@ sub __process_workflow {
             my @inline_action = split /\s+/, $action_name;            
             $action_name = shift @inline_action;
                 
+=cut LOGMIGRATE
             CTX('log')->log(
                 MESSAGE  => "Adding action: $action_name -> $next_state",
                 PRIORITY => 'debug',
                 FACILITY => 'workflow',
             );
+=cut LOGMIGRATE
+            CTX('log')->workflow()->debug("Adding action: $action_name -> $next_state");
+            #LOGMIGRATE 
 
             my $prefix;
             # As actions share a global namespace, we add a prefix to their names
@@ -232,11 +236,15 @@ sub __process_workflow {
 
     push @{$self->_workflow_config()->{workflow}}, $workflow;
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Adding workflow: $wf_name",
         PRIORITY => 'info',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->info("Adding workflow: $wf_name");
+    #LOGMIGRATE 
 
     return $workflow;
 
@@ -314,11 +322,15 @@ sub __process_action {
         my $required = $conn->get( [ @item_path, 'required' ] );
         my $is_required = (defined $required && $required =~ m/(yes|1)/i);
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE  => "Adding field $field_name / $context_key",
             PRIORITY => 'debug',
             FACILITY => 'workflow',
         );
+=cut LOGMIGRATE
+        CTX('log')->workflow()->debug("Adding field $field_name / $context_key");
+        #LOGMIGRATE 
 
         # Push to the field list for the action
         push @fields, { name => $context_key, is_required => $is_required ? 'yes' : 'no' };
@@ -373,11 +385,15 @@ sub __process_action {
     my $param = $conn->get_hash([ @path, 'param' ] );
     map {  $action->{$_} = $param->{$_} } keys %{$param};
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Adding action " . (Dumper $action),
         PRIORITY => 'debug',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->debug("Adding action " . (Dumper $action));
+    #LOGMIGRATE 
 
     push @{$self->_workflow_config()->{action}}, $action;
 
@@ -436,11 +452,15 @@ sub __process_condition {
         $condition->{param} = \@param;
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Adding condition " . (Dumper $condition),
         PRIORITY => 'debug',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->debug("Adding condition " . (Dumper $condition));
+    #LOGMIGRATE 
 
     push @{$self->_workflow_config()->{condition}}, $condition;
 
@@ -500,11 +520,15 @@ sub __process_validator {
         $validator->{param} = \@param;
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE  => "Adding validator " . (Dumper $validator),
         PRIORITY => 'debug',
         FACILITY => 'workflow',
     );
+=cut LOGMIGRATE
+    CTX('log')->workflow()->debug("Adding validator " . (Dumper $validator));
+    #LOGMIGRATE 
 
     push @{$self->_workflow_config()->{validator}}, $validator;
 

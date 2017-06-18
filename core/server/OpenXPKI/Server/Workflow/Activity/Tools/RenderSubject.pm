@@ -61,11 +61,15 @@ sub execute {
 
     ##! 16: 'Cleaned subject_vars' . Dumper $subject_vars
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Subject render input vars " . Dumper $subject_vars,
         PRIORITY => 'debug',
         FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->debug("Subject render input vars " . Dumper $subject_vars);
+    #LOGMIGRATE 
 
     my $cert_subject = CTX('api')->render_subject_from_template({
         PROFILE => $profile,
@@ -83,11 +87,15 @@ sub execute {
         );
     }
 
+=cut LOGMIGRATE
     CTX('log')->log(
         MESSAGE => "Rendering subject: $cert_subject",
         PRIORITY => 'info',
         FACILITY => [ 'application', ],
     );
+=cut LOGMIGRATE
+    CTX('log')->application()->info("Rendering subject: $cert_subject");
+    #LOGMIGRATE 
 
 
     my $cert_san_parts  = $context->param('cert_san_parts');
@@ -129,11 +137,15 @@ sub execute {
             }
         }
 
+=cut LOGMIGRATE
         CTX('log')->log(
             MESSAGE => "San template empty but extra_san present",
             PRIORITY => 'debug',
             FACILITY => [ 'application', ],
         );
+=cut LOGMIGRATE
+        CTX('log')->application()->debug("San template empty but extra_san present");
+        #LOGMIGRATE 
     }
 
     ##! 64: "Entries in san_list \n" .  Dumper $san_list;
