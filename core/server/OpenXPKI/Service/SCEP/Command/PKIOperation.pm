@@ -2,6 +2,7 @@
 ##
 ## Written 2006 by Alexander Klink for the OpenXPKI project
 ## Rewrite 2013 by Oliver Welter
+## Rewrite 201 by Gideon Knocke
 ## (C) Copyright 2006-2013 by The OpenXPKI Project
 ##
 package OpenXPKI::Service::SCEP::Command::PKIOperation;
@@ -55,7 +56,7 @@ sub execute {
 
     my $pkcs7_base64 = $params->{MESSAGE};
     ##! 64: 'pkcs7_base64: ' . $pkcs7_base64
-    my $pkcs7_decoded = decode_base64($pkcs7_base64);
+    my $pkcs7 = "-----BEGIN PKCS7-----\n" . $pkcs7_base64 . "-----END PKCS7-----\n";
 
     my $api       = CTX('api');
     my $pki_realm = CTX('session')->data->pki_realm;
@@ -63,19 +64,34 @@ sub execute {
 
     my $token = $self->__get_token();
 
-    my $message_type_ref = $token->command(
+    CTX('log')->log(
+            MESSAGE => "$pkcs7",
+            PRIORITY => 'debug',
+            FACILITY => 'application',
+        );
+
+    ##! 16: 'Start unwrap'
+    my $scep_handle = $token->command({
+        COMMAND => 'unwrap',
+        PKCS7 => $pkcs7,
+    });
+
+
+    ##! 32: 'unwrapped data ' . $scep_handle
+
+    my $message_type = $token->command(
         {   COMMAND => 'get_message_type',
-            PKCS7   => $pkcs7_decoded,
+            PKCS7   => $scep_handle,
         }
     );
 
-    ##! 32: 'PKI msg ' . Dumper $message_type_ref
-
-    if ( $message_type_ref->{MESSAGE_TYPE_NAME} eq 'PKCSReq' ) {
+    ##! 16: 'PKI msg type ' . $message_type
+    if ( $message_type eq 'PKCSReq' ) {
         my $resp = $self->__pkcs_req(
             {   TOKEN => $token,
-                PKCS7 => $pkcs7_base64,
+                PKCS7 => $scep_handle,
                 PARAMS => $url_params,
+                PKCSREQ => $pkcs7_base64,
             }
         );
         $result = $resp->[1];
@@ -83,28 +99,29 @@ sub execute {
             @extra_header = @{$resp->[0]};
         }
     }
-    elsif ( $message_type_ref->{MESSAGE_TYPE_NAME} eq 'GetCertInitial' ) {
+    elsif ( $message_type eq 'GetCertInitial' ) {
 
         # used by sscep after sending first request for polling
         my $resp = $self->__pkcs_req(
             {   TOKEN => $token,
-                PKCS7 => $pkcs7_base64,
+                PKCS7 => $scep_handle,
                 PARAMS => $url_params,
+                PKCSREQ => $pkcs7_base64,
             }
         );
         $result = $resp->[1];
     }
-    elsif ( $message_type_ref->{MESSAGE_TYPE_NAME} eq 'GetCert' ) {
+    elsif ( $message_type eq 'GetCert' ) {
 
         ##! 32: 'PKCS7 GetCert ' . $pkcs7_base64
         $result = $self->__send_cert(
             {   TOKEN => $token,
-                PKCS7 => $pkcs7_decoded,
+                PKCS7 => $scep_handle,
                 PARAMS => $url_params,
             }
         );
     }
-    elsif ( $message_type_ref->{MESSAGE_TYPE_NAME} eq 'GetCRL' ) {
+    elsif ( $message_type eq 'GetCRL' ) {
 
         ##! 32: 'PKCS7 GetCRL ' . $pkcs7_base64
         $result = $self->__send_crl(
@@ -118,7 +135,7 @@ sub execute {
     else {
         $result = $token->command(
             {   COMMAND      => 'create_error_reply',
-                PKCS7        => $pkcs7_decoded,
+                PKCS7        => $scep_handle,
                 HASH_ALG     => CTX('session')->data->hash_alg,
                 'ERROR_CODE' => 'badRequest',
             }
@@ -143,11 +160,10 @@ sub __send_cert : PRIVATE {
     my $arg_ref   = shift;
 
     my $token = $arg_ref->{TOKEN};
-    my $pkcs7_decoded = $arg_ref->{PKCS7};
-
+    my $scep_handle = $arg_ref->{PKCS7};
     my $requested_serial_hex = $token->command({
         COMMAND => 'get_getcert_serial',
-        PKCS7   => $pkcs7_decoded,
+        PKCS7   => $scep_handle,
     });
 
     # Serial is in Hex Format - we need decimal!
@@ -184,7 +200,7 @@ sub __send_cert : PRIVATE {
 
         return $token->command(
             {   COMMAND      => 'create_error_reply',
-                PKCS7        => $pkcs7_decoded,
+                PKCS7        => $scep_handle,
                 HASH_ALG     => CTX('session')->data->hash_alg,
                 'ERROR_CODE' => 'badCertId',
             }
@@ -198,7 +214,7 @@ sub __send_cert : PRIVATE {
     ##! 16: 'cert data ' . Dumper $cert_pem
     my $result = $token->command(
         {   COMMAND        => 'create_certificate_reply',
-            PKCS7          => $pkcs7_decoded,
+            PKCS7          => $scep_handle,
             CERTIFICATE    => $cert_pem,
             HASH_ALG       => CTX('session')->data->hash_alg,
             ENCRYPTION_ALG => CTX('session')->data->enc_alg,
@@ -332,14 +348,14 @@ sub __pkcs_req : PRIVATE {
 
     my $url_params =  $arg_ref->{PARAMS};
 
-    my $pkcs7_base64 = $arg_ref->{PKCS7};
+    my $pkcs7_base64 = $arg_ref->{PKCSREQ};
     ##! 64: 'pkcs7_base64: ' . $pkcs7_base64
-    my $pkcs7_decoded = decode_base64($pkcs7_base64);
+    my $scep_handle = $arg_ref->{PKCS7};
     my $token         = $arg_ref->{TOKEN};
 
     my $transaction_id = $token->command(
         {   COMMAND => 'get_transaction_id',
-            PKCS7   => $pkcs7_decoded,
+            PKCS7   => $scep_handle,
         }
     );
 
@@ -372,9 +388,7 @@ sub __pkcs_req : PRIVATE {
     }
 
     ##! 16: "transaction ID: $transaction_id - workflow id: $workflow_id"
-
     if ( $workflow_id ) {
-
         # Fetch the workflow
         $wf_info = $api->get_workflow_info({
             ID       => $workflow_id,
@@ -426,7 +440,7 @@ sub __pkcs_req : PRIVATE {
 
         my $pkcs10 = $token->command(
             {   COMMAND => 'get_pkcs10',
-                PKCS7   => $pkcs7,
+                PKCS7   => $scep_handle,
             }
         );
 
@@ -439,11 +453,11 @@ sub __pkcs_req : PRIVATE {
 
         my $signer_cert = $token->command(
             {   COMMAND => 'get_signer_cert',
-                PKCS7   => $pkcs7,
+                PKCS7   => $scep_handle,
             }
         );
 
-        ##! 64: "signer_cert: " . $signer_cert
+                ##! 64: "signer_cert: " . $signer_cert
 
         # preregister the datapool key to prevent
         # race conditions with parallel workflows
@@ -522,13 +536,14 @@ sub __pkcs_req : PRIVATE {
     my @extra_header = ( "X-OpenXPKI-WorkflowId: " . $wf_info->{WORKFLOW}->{ID} );
 
     if ( $wf_state ne 'SUCCESS' && $wf_state ne 'FAILURE' ) {
+
         CTX('log')->application()->info("SCEP $workflow_id in state $wf_state, send pending reply");
 
 
         # we are still pending
         my $pending_msg = $token->command(
             {   COMMAND  => 'create_pending_reply',
-                PKCS7    => $pkcs7_decoded,
+                PKCS7    => $scep_handle,
                 HASH_ALG => CTX('session')->data->hash_alg,
             }
         );
@@ -584,7 +599,7 @@ sub __pkcs_req : PRIVATE {
 
         my $certificate_msg = $token->command(
             {   COMMAND        => 'create_certificate_reply',
-                PKCS7          => $pkcs7_decoded,
+                PKCS7          => $scep_handle,
                 CERTIFICATE    => $certificate,
                 ENCRYPTION_ALG => CTX('session')->data->enc_alg,
                 HASH_ALG       => CTX('session')->data->hash_alg,
@@ -611,7 +626,7 @@ sub __pkcs_req : PRIVATE {
     }
     my $error_msg = $token->command(
         {   COMMAND      => 'create_error_reply',
-            PKCS7        => $pkcs7_decoded,
+            PKCS7        => $scep_handle,
             HASH_ALG     => CTX('session')->data->hash_alg,
             'ERROR_CODE' => $scep_error_code,
         }
